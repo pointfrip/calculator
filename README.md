@@ -1,5 +1,5 @@
 # Pointfrip
-programmierbarer Calculator
+**programmierbarer Calculator** \
 
 
 Pointfrip for Android - in Kotlin
