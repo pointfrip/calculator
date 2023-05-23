@@ -3,6 +3,6 @@
 
 \
 \
-Pointfrip for Android - in Kotlin
+Pointfrip for Android
 
 
