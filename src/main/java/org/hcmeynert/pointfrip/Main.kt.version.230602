@@ -81,10 +81,10 @@ class Error {
 }
 
 class Act {
-    val num: Any
+    val num: Long
     val data: Any
     var bind: Any
-    constructor (n: Any, dt: Any, bd: Any) { num = n; data = dt; bind = bd }
+    constructor (n: Long, dt: Any, bd: Any) { num = n; data = dt; bind = bd }
 }
 
 class VirtualMachine {
@@ -181,7 +181,7 @@ class VirtualMachine {
     var idisquote: Ident = newidentfunc("isquote",::fisQuote)
     var idisivar: Ident = newidentfunc("isivar",::fisIvar)
     var idiscombi: Ident = newidentfunc("iscombi",::fisCombi)
-    var idisact: Ident = newidentfunc("isact",::fisAct)
+    //  idisact
     var idisbool: Ident = newidentfunc("isbool",::fisBool)
     var idisbound: Ident = newidentfunc("isbound",::fisBound)
     var idisundef: Ident = newidentfunc("isundef",::fisundef)
@@ -197,10 +197,7 @@ class VirtualMachine {
     var idbody: Ident = newidentfunc("body",::fbody)
     var idinfo: Ident = newidentfunc("info",::finfo)  // ??? noch nötig?
     var ididentlist: Ident = newidentfunc("identlist",::fidentlist)
-    var idquote: Ident = newidentfunc("quote",::fquote)
     var iderror: Ident = newidentfunc("error",::ferror)
-    var idact: Ident = newidentfunc("act",::fact)
-    var idbind: Ident = newidentfunc("bind",::fbind)
     var idiota: Ident = newidentfunc("iota",::fiota)
     var idto: Ident = newidentfunc("to",::fto)
     var idreverse: Ident = newidentfunc("reverse",::freverse)
@@ -214,7 +211,6 @@ class VirtualMachine {
     var idput: Ident = newidentfunc("put",::fput)
     var idkeys: Ident = newidentfunc("keys",::fkeys)
     var idvalues: Ident = newidentfunc("values",::fvalues)
-    var idit: Ident = newidentfunc("it",::fit)
     var idcount: Ident = newidentfunc("count",::fcount)
     var idfind: Ident = newidentfunc("find",::ffind)
     var idin: Ident = newidentfunc("in",::fin)
@@ -265,7 +261,6 @@ class VirtualMachine {
     var idipr: Ident = Ident("interpreter",Nil()) // ?
     var xsingle: Ident = identlistPut("_s",Nil())
     var xsuper: Ident = identlistPut("_super",Nil())
-    var xit: Ident = identlistPut("_it",Nil())  // Nil?
 
 
     constructor () {
@@ -1602,9 +1597,15 @@ class VirtualMachine {
 
     fun fisCombi()  {  if (etop !is Error) etop = (etop is Combine)  }
 
-    fun fisAct()    {  if (etop !is Error) etop = (etop is Act)  }
+    // isAct
 
-    fun fisBool()   {  if (etop !is Error) etop = (etop is Boolean)  }
+    fun fisBool() {
+        when (etop) {
+            true     -> etop = true
+            false    -> etop = true
+            is Error -> { }
+            else     -> etop = false
+        } }
 
     fun fisBound() {
         when (etop) {
@@ -1645,9 +1646,11 @@ class VirtualMachine {
 
     // out
 
-    fun fidentlist() {  if (etop !is Error) etop = identlist  }
-
-    fun fquote() {  if (etop !is Error) etop = Quote(etop)  }
+    fun fidentlist() {
+        when (etop) {
+            is Error -> { }
+            else     -> etop = reverse(identlist) // ?
+        } }
 
     fun ferror() {
         ee(iderror)
@@ -1656,26 +1659,6 @@ class VirtualMachine {
             else etop = Error(iderror,"Ident Typ für Operand[0] erwartet")
         }
         efun = xnil  }
-
-    fun fact() {
-        ee(idact)
-        if (etop !is Error) {
-            if ((etop is Cell) or (etop is Nil)) {
-                if ((efun is Long) or (efun is Act)) etop = Act(efun,etop,idit)
-                else etop = Error(idact,"Integer oder Act als Operand[0] erwartet")
-            } else etop = Error(idact,"Dict als Operand[1] erwartet")  }
-        efun = xnil  }
-
-    fun fbind() {
-        ee(idbind)
-        if (etop !is Error) {
-            if (efun is Act) {
-                etop = Act((efun as Act).num,(efun as Act).data,etop)
-            } else etop = Error(idbind,"Act für Operand[0] erwartet")  }
-        efun = xnil  }
-
-    // bind (ee, mit Kopie von Act)
-    // >>   (in prelude)
 
     // trans
     // applic (?)
@@ -1973,14 +1956,6 @@ class VirtualMachine {
             else     -> etop = Error(idvalues,"Table als Argument erwartet")
         }  }
 
-    fun fit() {
-        when (etop) {
-            is Cell  -> etop = iget(idit,etop,xit)
-            is Nil   -> etop = xundef
-            is Error -> { }
-            else     -> etop = Error(idit,"Dict als Argument erwartet")
-        }  }
-
     fun fcount() {
         ee(idcount)
         if (etop !is Error) {
@@ -2274,11 +2249,12 @@ class VirtualMachine {
         var id: Ident
         var s: String = ""
         var ln: String = ""
+        val crlf: String = ""+13.toChar()+10.toChar()
         while (p is Cell) {
             id = p.head as Ident
             if (id.value == xreserve) {  s = ("// " + id.pname + ln) + s  }
             else {  s = (id.pname + " == " + toTable(id.value) + ln) + s  }
-            ln = "\n"
+            ln = crlf
             p = p.tail
         }
         etop = s }
@@ -2289,41 +2265,14 @@ class VirtualMachine {
         var id: Ident
         var s: String = ""
         var ln: String = ""
+        val crlf: String = ""+13.toChar()+10.toChar()
         while (p is Cell) {
             id = p.head as Ident
             if (id.info != "") {  s = (id.info + ln) + s  }
-            ln = "\n"
+            ln = crlf
             p = p.tail
         }
         etop = s }
-
-    fun deflines(lines: Any): Any {
-        var list = lines
-        var line: Any
-        var ctable: Any
-        var id: Ident
-        var res: String = ""
-        var ln: String = ""
-        try {
-            while (list is Cell) {
-                line = list.head
-                list = list.tail
-                if (line is String) {
-                    ctable = nbackcons(nreverse(parse(line)))
-                    if (ctable is Cell) {
-                        if ((ctable.head is Ident) and (ctable.infix == iddef)) {
-                            id = ctable.head as Ident
-                            id.info = line
-                            id.value = ctable.tail
-                            res = res + (ln + id.pname+" == "+toTable(id.value))
-                            ln = "\n"
-                        }
-                    }
-                } else return Error(idipr,"Liste mit Strings erwartet")
-            }
-            return res
-        } catch(e: Exception) {  return Error(idipr,e.message as String)  }
-    }
 
     fun calc(txt: String): Any {
         var ctable: Any = Nil()
@@ -2377,56 +2326,52 @@ class VirtualMachine {
 // ------- prelude text
 
     fun prelude(): String {
-        // "->* ==((head°term) app arg)->(term app (tail°term) app arg);arg"
-        return  "" +
-                "trans==(isatom°head)->();(head aa),trans°(tail aa)\n" +
-                "distl==(trans°([0] make length°[1]) ee [1])°ee\n" +
-                "distr==(trans°[0] ee [1] make length°[0])°ee\n" +
-                "map0==((isatom°[0]°[0])->();([1] app ((head°[0]),tail)°[0]),(((tail°[0]),tail)°[0]) map0 [1])°ee\n" +
-                "aa0==arg map0 head°term\n" +
-                "<- == (head°term) app reverse°[0]°(((isprop°[1]) and isprop°[2])->*(prop°(head°[2]),(head°[1]),[0],),(tail°[1]),(tail°[2]),)°(),(tail°term) ee arg\n" +
-                "isodd == (round imod '[2])='[1]\n" +
-                "ismat==isnum°head°head\n" +
-                "zero==ismat -> (length zeromat length°head) ; isreal -> 0 ; isint -> '[0] ; isbool -> 'false ; fail°'zero,id,\n" +
-                "one ==ismat -> (idmat°length) ; isreal -> 1 ; isint -> '[1] ; isbool -> 'true  ; fail°'one,id,\n" +
-                "scale==((isnum°[1]) -> ((* aa0) aa0) ; fail°'scale,id)°ee\n" +
-                "zeromat==(((([2] aa0)°(iota°[1]),tail) aa0)°(iota°round°[0]) ,(round°[1]),(zero°[0]),)°ee\n" +
-                "idmat  ==((((([0]=[1])->[4];[3]) aa0)°(iota°[1]),id) aa0)°(iota°round),round,zero,one,\n" +
-                "negifodd == ((isodd°[0])->(neg°[1]);[1])°ee\n" +
-                "droppos==((isnull°[0])->();(iszero°[1])->((tail°[0]) droppos pred°[1]);(head°[0]),(tail°[0]) droppos pred°[1])°ee\n" +
-                "droprow==(droppos aa)°distr\n" +
-                "det==((isnull°[1])->(head°[0]);[3]°(not°isnull°[0])->*(tail°[0]),[1],(succ°[2]),([3] + [4] negifodd (head°[0])*det°[1] droprow [2]),(succ°[4]),)°head,tail,'[0],(zero°head°head),'[0],\n" +
-                "Aij==(([0] droppos [1]°[1]) droprow [0]°[1])°ee\n" +
-                "inv==((iszero°[1])->('inv error \"Division by Zero\"); (((([1]°[1]) * (+°[0]) negifodd det°([0]°[1])Aij[0]) aa)aa)°(distr aa)°((distl aa)°[2]distr[2])distr[0]ee(one°[1])/[1])°id,det,('[0],iota°pred°round°length),\n" +
-                "add==(((ismat°[0]) and ismat°[1])->((((+ aa)°trans) aa)°trans);((isnum°[0]) and isnum°[1])->([0]+[1]);fail°'add,id)°ee\n" +
-                "sub==(((ismat°[0]) and ismat°[1])->((((- aa)°trans) aa)°trans);((isnum°[0]) and isnum°[1])->([0]-[1]);fail°'sub,id)°ee\n" +
-                "mul==(((ismat°[0]) and ismat°[1])->([0] MM [1]);((isnum°[0]) and ismat°[1])->([1] scale [0]);((ismat°[0]) and isnum°[1])->([0] scale [1]);((isnum°[0]) and isnum°[1])->([0]*[1]);fail°'mul,id)°ee\n" +
-                "fail=='FAIL error id\n" +
-                ":= == arg iput (head°term) ee (tail°term) app arg\n" +
-                "IP == (+ \\)°(* aa)°trans°ee\n" +
-                "MM==((IP aa)aa)°(distl aa)°distr°([0] ee trans°[1])°ee\n" +
-                "rnd==(((id roundto 5) aa) aa)\n" +
-                ">> == ((head°term) app arg) bind tail°term\n" +
-                "load=='[1] act () iput '_it ee id\n" +
-                "save=='[2] act () iput '_it ee id\n" +
-                "files=='[3] act ()\n" +
-                "pim == reverse°[2]°(([0]>1)->*(iszero°[0]-[1]*floor°[0]/[1])->(([0]/[1]),[1],([1],[2]),);([0],([1]+1),[2],))°id,2,(),"
-    }
+    val crlf: String = ""+13.toChar()+10.toChar()
+    val res: String =
+    toValue(calc("trans==(isatom°head)->();(head aa),trans°(tail aa)"))+crlf+
+    toValue(calc("distl==(trans°([0] make length°[1]) ee [1])°ee"))+crlf+
+    toValue(calc("distr==(trans°[0] ee [1] make length°[0])°ee"))+crlf+
+    // toValue(calc("// ->* ==((head°term) app arg)->(term app (tail°term) app arg);arg"))+crlf+
+    toValue(calc("map0==((isatom°[0]°[0])->();([1] app ((head°[0]),tail)°[0]),(((tail°[0]),tail)°[0]) map0 [1])°ee"))+crlf+
+    toValue(calc("aa0==arg map0 head°term"))+crlf+
+    toValue(calc("<- == (head°term) app reverse°[0]°(((isprop°[1]) and isprop°[2])->*(prop°(head°[2]),(head°[1]),[0],),(tail°[1]),(tail°[2]),)°(),(tail°term) ee arg"))+crlf+
+    toValue(calc("isodd == (round imod '[2])='[1]"))+crlf+
+    toValue(calc("ismat==isnum°head°head"))+crlf+
+    toValue(calc("zero==ismat -> (length zeromat length°head) ; isreal -> 0 ; isint -> '[0] ; isbool -> 'false ; fail°'zero,id,"))+crlf+
+    toValue(calc("one ==ismat -> (idmat°length) ; isreal -> 1 ; isint -> '[1] ; isbool -> 'true  ; fail°'one,id,"))+crlf+
+    toValue(calc("scale==((isnum°[1]) -> ((* aa0) aa0) ; fail°'scale,id)°ee"))+crlf+
+    toValue(calc("zeromat==(((([2] aa0)°(iota°[1]),tail) aa0)°(iota°round°[0]) ,(round°[1]),(zero°[0]),)°ee"))+crlf+
+    toValue(calc("idmat  ==((((([0]=[1])->[4];[3]) aa0)°(iota°[1]),id) aa0)°(iota°round),round,zero,one,"))+crlf+
+    toValue(calc("negifodd == ((isodd°[0])->(neg°[1]);[1])°ee"))+crlf+
+    toValue(calc("droppos==((isnull°[0])->();(iszero°[1])->((tail°[0]) droppos pred°[1]);(head°[0]),(tail°[0]) droppos pred°[1])°ee"))+crlf+
+    toValue(calc("droprow==(droppos aa)°distr"))+crlf+
+    toValue(calc("det==((isnull°[1])->(head°[0]);[3]°(not°isnull°[0])->*(tail°[0]),[1],(succ°[2]),([3] + [4] negifodd (head°[0])*det°[1] droprow [2]),(succ°[4]),)°head,tail,'[0],(zero°head°head),'[0],"))+crlf+
+    toValue(calc("Aij==(([0] droppos [1]°[1]) droprow [0]°[1])°ee"))+crlf+
+    toValue(calc("inv==((iszero°[1])->('inv error \"Division by Zero\"); (((([1]°[1]) * (+°[0]) negifodd det°([0]°[1])Aij[0]) aa)aa)°(distr aa)°((distl aa)°[2]distr[2])distr[0]ee(one°[1])/[1])°id,det,('[0],iota°pred°round°length),"))+crlf+
+    toValue(calc("add==(((ismat°[0]) and ismat°[1])->((((+ aa)°trans) aa)°trans);((isnum°[0]) and isnum°[1])->([0]+[1]);fail°'add,id)°ee"))+crlf+
+    toValue(calc("sub==(((ismat°[0]) and ismat°[1])->((((- aa)°trans) aa)°trans);((isnum°[0]) and isnum°[1])->([0]-[1]);fail°'sub,id)°ee"))+crlf+
+    toValue(calc("mul==(((ismat°[0]) and ismat°[1])->([0] MM [1]);((isnum°[0]) and ismat°[1])->([1] scale [0]);((ismat°[0]) and isnum°[1])->([0] scale [1]);((isnum°[0]) and isnum°[1])->([0]*[1]);fail°'mul,id)°ee"))+crlf+
+    toValue(calc("fail=='FAIL error id"))+crlf+
+    toValue(calc(":= == arg iput (head°term) ee (tail°term) app arg"))+crlf+
+    toValue(calc("IP == (+ \\)°(* aa)°trans°ee"))+crlf+
+    toValue(calc("MM==((IP aa)aa)°(distl aa)°distr°([0] ee trans°[1])°ee"))+crlf+
+    toValue(calc("rnd==(((id roundto 5) aa) aa)"))+crlf+
+    toValue(calc("pim == reverse°[2]°(([0]>1)->*(iszero°[0]-[1]*floor°[0]/[1])->(([0]/[1]),[1],([1],[2]),);([0],([1]+1),[2],))°id,2,(),"))
+    return res  }
 
 }  // end of class VirtualMachine
 
 fun main() {      //   help:()     new ?      help:name    save:datei1.txt     load:datei1.txt     ???
     val vm = VirtualMachine()    // (fact aa)°0,iota°10
-    val txt = vm.prelude()
-    println(vm.toValue(vm.deflines(vm.splitTo(txt,"\n"))))
+    println(vm.prelude())
     // init()  // as (Any) -> Any)
     //println(vm.toValue(vm.calc("")))
     //println(vm.toValue(vm.calc("mul==(((ismat°[0]) and ismat°[1])->([0] MM [1]);fail)°ee")))
     //(""last==(isprop°'true)->*[0]°tail°[1]'()")
     //println(vm.toValue(vm.calc("A == ((1;2;3;);(4;5;8;);(7;8;9;);)")))
     //println(vm.toValue(vm.calc("_180+45")))
-    println(vm.toValue(vm.calc("\"--------------------------------\"")))
-    println(vm.toValue(vm.calc("pim°2023")))
+    println(vm.toValue(vm.calc("(* \\)°pim°2023")))
+    println(vm.toValue(vm.calc("(* \\)°pim°2024")))
     //"last==(isprop°'true)->*[0]°tail°[1]'()") // hier bei comment _s ?
     //val abc: Any = idreserve
     // Cell(idmark,1234,Combine(Ident("add",123),"test1")) // Cell(Cell("abc",Ivar(abc),Cell(1234,1234.567,Nil())),Ident("°",123),

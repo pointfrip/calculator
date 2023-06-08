@@ -1,19 +1,110 @@
 package org.hcmeynert.pointfrip
 
 //import android.R
+
+//import android.R
 import android.os.Bundle
 import android.text.Layout
 import android.text.Selection
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
+
 
 var vm = VirtualMachine()
-var initxt = vm.prelude()
-// lateinit var et2: EditText
+var itxt = vm.prelude()
+var otxt = vm.toValue(vm.deflines(vm.splitTo(itxt,"\n")))
+lateinit var et1: EditText
+//lateinit var et2: EditText
 
 class MainActivity : AppCompatActivity() {
+
+    var idload: Ident = Ident("load",Nil())
+    var idsave: Ident = Ident("save",Nil())
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.pf_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val path = applicationContext.filesDir
+        val dir = File(path,"pf")
+
+        when (item.itemId) {
+            R.id.clear -> {
+                vm = VirtualMachine()
+                itxt = vm.prelude()
+                otxt = vm.toValue(vm.deflines(vm.splitTo(itxt,"\n")))
+                et1.setText("")
+                return true  }
+            R.id.load  -> {
+                val file = File(dir, "Test.txt")
+                val contents = file.readText()
+                et1.setText(contents)
+                //doit
+                return true  }
+            R.id.save  -> {
+                if (!dir.exists()) dir.mkdir()
+                val file = File(dir,"Test.txt")
+                file.writeText("record goes here")
+                //doit
+                return true  }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun doAct(a: Act): Any {
+        when (a.num) {
+            1.toLong() -> {
+                val rget = vm.get(idload,a.data,vm.xit)
+                val rname = when (rget) {
+                    is Ident  -> rget.pname
+                    is String -> rget
+                    else      -> ""     }
+                if (rname!="") {
+                    val rpath = applicationContext.filesDir
+                    val rdir = File(rpath,"pf")
+                    if (!rdir.exists()) rdir.mkdir()
+                    val rfile = File(rdir, rname)
+                    if (rfile.exists()) {
+                        val rtxt = rfile.readText()
+                        //vm = VirtualMachine()=>vergisst Daten
+                        itxt = vm.prelude()
+                        otxt = vm.toValue(vm.deflines(vm.splitTo(itxt,"\n")))
+                        val txt = vm.toValue(vm.deflines(vm.splitTo(rtxt,"\n")))
+                        runOnUiThread {  et1.setText(rtxt)  }
+                        return vm.run(a.bind,a.data)
+                    } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idload,"Datei existiert nicht")))
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idload,"Fehlerhafter Filename")))
+            }
+            2.toLong() -> {
+                val wget = vm.iget(idsave,a.data,vm.xit)
+                val wname = when (wget) {
+                    is Ident  -> wget.pname
+                    is String -> wget
+                    else      -> ""     }
+                if (wname!="") {
+                    val wpath = applicationContext.filesDir
+                    val wdir = File(wpath,"pf")
+                    if (!wdir.exists()) wdir.mkdir()
+                    val wfile = File(wdir,wname)
+                    val wtxt = et1.text.toString()
+                    wfile.writeText(wtxt)
+                    return vm.run(a.bind,a.data)
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsave,"Fehlerhafter Filename")))
+            }
+            3.toLong() -> {  return "TEST:files"}
+            is Act     -> {  return "Test:Act"}
+            else       -> {  return "Test:else"}
+        }
+    }
 
     fun selectline(txt: String,n: Int): String {
         var i: Int = n-1
@@ -59,24 +150,25 @@ class MainActivity : AppCompatActivity() {
         val rlt: Button = findViewById<View>(R.id.button5) as Button
         val lft: Button = findViewById<View>(R.id.button6) as Button
         val rgt: Button = findViewById<View>(R.id.button7) as Button
-        val et1 = findViewById<View>(R.id.editTextTextPersonName) as EditText
+        et1 = findViewById<View>(R.id.editTextTextPersonName) as EditText
         val et2 = findViewById<View>(R.id.editTextTextPersonName2) as EditText
 
         //exe.setText("Evaluate")
-        //et1.()
+        //et2.setText(otxt)
 
         exe.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val txt: String = et1.text.toString()
                 val n = Selection.getSelectionStart(et1.getText()) // ???
                 val lineN = selectline(txt,n)
-                if (runningvm) runningvm = false
+                if (runvm) runvm = false
                 else {  // hier ist der Thread
                     val thread: Thread = object : Thread(null, null, "pointfrip", 50000000) {
                     override fun run() {
-                        val res = vm.toValue(vm.calc(lineN))
+                        var res = vm.calc(lineN)
+                        while (res is Act) { res = doAct(res) }
                         runOnUiThread {
-                            et2.setText(res)
+                            et2.setText(vm.toValue(res))
                         }  }  }
                     thread.start()  }
             } })
