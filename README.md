@@ -5,5 +5,5 @@
 \
 Pointfrip for Android
 
-![calculator-image](https://raw.githubusercontent.com/pointfrip/pointfrip.github.io/main/images/pixel2image.png)
+![calculator-image](https://raw.githubusercontent.com/pointfrip/calculator/main/pixel2image.png)
 
