@@ -6,12 +6,4 @@
           android:title="@string/clear"
           app:showAsAction="never"/>
 
-    <item android:id="@+id/load"
-        android:title="@string/load"
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/save"
-        android:title="@string/save"
-        app:showAsAction="never"/>
-
 </menu>

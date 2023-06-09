@@ -44,18 +44,21 @@ class MainActivity : AppCompatActivity() {
                 otxt = vm.toValue(vm.deflines(vm.splitTo(itxt,"\n")))
                 et1.setText("")
                 return true  }
+            /*
             R.id.load  -> {
                 val file = File(dir, "Test.txt")
                 val contents = file.readText()
                 et1.setText(contents)
                 //doit
                 return true  }
+            */
+            /*
             R.id.save  -> {
                 if (!dir.exists()) dir.mkdir()
                 val file = File(dir,"Test.txt")
                 file.writeText("record goes here")
                 //doit
-                return true  }
+                return true  } */
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -65,8 +68,8 @@ class MainActivity : AppCompatActivity() {
             1.toLong() -> {
                 val rget = vm.get(idload,a.data,vm.xit)
                 val rname = when (rget) {
-                    is Ident  -> rget.pname
-                    is String -> rget
+                    is Ident  -> rget.pname.substringAfterLast("/")
+                    is String -> rget.substringAfterLast("/")
                     else      -> ""     }
                 if (rname!="") {
                     val rpath = applicationContext.filesDir
@@ -76,8 +79,8 @@ class MainActivity : AppCompatActivity() {
                     if (rfile.exists()) {
                         val rtxt = rfile.readText()
                         //vm = VirtualMachine()=>vergisst Daten
-                        itxt = vm.prelude()
-                        otxt = vm.toValue(vm.deflines(vm.splitTo(itxt,"\n")))
+                        //itxt = vm.prelude()
+                        //otxt = vm.toValue(vm.deflines(vm.splitTo(itxt,"\n")))
                         val txt = vm.toValue(vm.deflines(vm.splitTo(rtxt,"\n")))
                         runOnUiThread {  et1.setText(rtxt)  }
                         return vm.run(a.bind,a.data)
@@ -87,8 +90,8 @@ class MainActivity : AppCompatActivity() {
             2.toLong() -> {
                 val wget = vm.iget(idsave,a.data,vm.xit)
                 val wname = when (wget) {
-                    is Ident  -> wget.pname
-                    is String -> wget
+                    is Ident  -> wget.pname.substringAfterLast("/")
+                    is String -> wget.substringAfterLast("/")
                     else      -> ""     }
                 if (wname!="") {
                     val wpath = applicationContext.filesDir
@@ -100,7 +103,16 @@ class MainActivity : AppCompatActivity() {
                     return vm.run(a.bind,a.data)
                 } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsave,"Fehlerhafter Filename")))
             }
-            3.toLong() -> {  return "TEST:files"}
+            3.toLong() -> {
+                val fpath = applicationContext.filesDir
+                val fdir = File(fpath,"pf")
+                if (!fdir.exists()) fdir.mkdir()
+                val flist = fdir.listFiles()
+                var f: Any = Nil()
+                flist.forEach{
+                    f = Cell(it.toString().substringAfterLast("/"),vm.xcons,f)  }
+                return vm.run(a.bind,vm.iput(a.data,vm.xit,vm.nreverse(f)))
+            }
             is Act     -> {  return "Test:Act"}
             else       -> {  return "Test:else"}
         }

@@ -240,6 +240,7 @@ class VirtualMachine {
     var idstopvm: Ident = newidentfunc("stopvm",::fstopvm)
     var iddump: Ident = newidentfunc("dump",::fdump)
     var idsavedump: Ident = newidentfunc("savedump",::fsavedump) // for test
+    var idhelp: Ident = newidentfunc("help",::fhelp)
 
 // ----- no-func-idents
 
@@ -2297,6 +2298,10 @@ class VirtualMachine {
         }
         etop = s }
 
+    fun fhelp() {
+        etop = "https://github.com/pointfrip/calculator/blob/main/quickinfo.pdf"
+    }
+
     fun deflines(lines: Any): Any {
         var list = lines
         var line: Any
@@ -2407,9 +2412,9 @@ class VirtualMachine {
                 "MM==((IP aa)aa)°(distl aa)°distr°([0] ee trans°[1])°ee\n" +
                 "rnd==(((id roundto 5) aa) aa)\n" +
                 ">> == ((head°term) app arg) bind tail°term\n" +
-                "load=='[1] act () iput '_it ee id\n" +
-                "save=='[2] act () iput '_it ee id\n" +
-                "files=='[3] act ()\n" +
+                "load=='[1] act arg iput '_it ee (head°term) app arg\n" +
+                "save=='[2] act arg iput '_it ee (head°term) app arg\n" +
+                "files=='[3] act id\n" +
                 "pim == reverse°[2]°(([0]>1)->*(iszero°[0]-[1]*floor°[0]/[1])->(([0]/[1]),[1],([1],[2]),);([0],([1]+1),[2],))°id,2,(),"
     }
 
@@ -2425,8 +2430,9 @@ fun main() {      //   help:()     new ?      help:name    save:datei1.txt     l
     //(""last==(isprop°'true)->*[0]°tail°[1]'()")
     //println(vm.toValue(vm.calc("A == ((1;2;3;);(4;5;8;);(7;8;9;);)")))
     //println(vm.toValue(vm.calc("_180+45")))
-    println(vm.toValue(vm.calc("\"--------------------------------\"")))
-    println(vm.toValue(vm.calc("pim°2023")))
+    //println(vm.toValue(vm.calc("lood == '[1] act arg iput '_it ee (head°term) app arg")))
+    println(vm.toValue(vm.calc("help")))
+    //println("hallo.txt".substringAfterLast("/"))
     //"last==(isprop°'true)->*[0]°tail°[1]'()") // hier bei comment _s ?
     //val abc: Any = idreserve
     // Cell(idmark,1234,Combine(Ident("add",123),"test1")) // Cell(Cell("abc",Ivar(abc),Cell(1234,1234.567,Nil())),Ident("°",123),
