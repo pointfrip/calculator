@@ -267,6 +267,8 @@ class VirtualMachine {
     var xsingle: Ident = identlistPut("_s",Nil())
     var xsuper: Ident = identlistPut("_super",Nil())
     var xit: Ident = identlistPut("_it",Nil())  // Nil?
+    var xself: Ident = identlistPut("_self",Nil())
+    var xpara: Ident = identlistPut("_para",Nil())
 
 
     constructor () {
@@ -2415,6 +2417,8 @@ class VirtualMachine {
                 "load=='[1] act arg iput '_it ee (head°term) app arg\n" +
                 "save=='[2] act arg iput '_it ee (head°term) app arg\n" +
                 "files=='[3] act id\n" +
+                "loadtext=='[4] act arg iput '_it ee (head°term) app arg\n" +
+                "savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (tail°term) app arg\n" +
                 "pim == reverse°[2]°(([0]>1)->*(iszero°[0]-[1]*floor°[0]/[1])->(([0]/[1]),[1],([1],[2]),);([0],([1]+1),[2],))°id,2,(),"
     }
 
@@ -2431,7 +2435,8 @@ fun main() {      //   help:()     new ?      help:name    save:datei1.txt     l
     //println(vm.toValue(vm.calc("A == ((1;2;3;);(4;5;8;);(7;8;9;);)")))
     //println(vm.toValue(vm.calc("_180+45")))
     //println(vm.toValue(vm.calc("lood == '[1] act arg iput '_it ee (head°term) app arg")))
-    println(vm.toValue(vm.calc("help")))
+    //println(vm.toValue(vm.calc("savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (head°term) app arg\n")))
+    println(vm.toValue(vm.calc("('fname loadtext)°(a:=10)°(b:=20)")))
     //println("hallo.txt".substringAfterLast("/"))
     //"last==(isprop°'true)->*[0]°tail°[1]'()") // hier bei comment _s ?
     //val abc: Any = idreserve

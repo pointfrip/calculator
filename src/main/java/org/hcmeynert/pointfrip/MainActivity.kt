@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     var idload: Ident = Ident("load",Nil())
     var idsave: Ident = Ident("save",Nil())
+    var idloadtext: Ident = Ident("loadtext",Nil())
+    var idsavetext: Ident = Ident("savetext",Nil())
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
@@ -112,6 +114,41 @@ class MainActivity : AppCompatActivity() {
                 flist.forEach{
                     f = Cell(it.toString().substringAfterLast("/"),vm.xcons,f)  }
                 return vm.run(a.bind,vm.iput(a.data,vm.xit,vm.nreverse(f)))
+            }
+            4.toLong() -> {
+                val rget = vm.iget(idloadtext,a.data,vm.xit)
+                val rname = when (rget) {
+                    is Ident  -> rget.pname.substringAfterLast("/")
+                    is String -> rget.substringAfterLast("/")
+                    else      -> ""     }
+                if (rname!="") {
+                    val rpath = applicationContext.filesDir
+                    val rdir = File(rpath,"pf")
+                    if (!rdir.exists()) rdir.mkdir()
+                    val rfile = File(rdir, rname)
+                    if (rfile.exists()) {
+                        val rtxt = rfile.readText()
+                        return vm.run(a.bind,vm.iput(a.data,vm.xit,rtxt))
+                    } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idloadtext,"Datei existiert nicht")))
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idloadtext,"Fehlerhafter Filename")))
+            }
+            5.toLong() -> {
+                val wself = vm.iget(idsavetext,a.data,vm.xself)
+                val wpara = vm.iget(idsavetext,a.data,vm.xpara)
+                if (wpara !is String)
+                    return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsavetext,"String als Operand[1] erwartet")))
+                val wname = when (wself) {
+                    is Ident  -> wself.pname.substringAfterLast("/")
+                    is String -> wself.substringAfterLast("/")
+                    else      -> ""      }
+                if (wname!="") {
+                    val wpath = applicationContext.filesDir
+                    val wdir = File(wpath,"pf")
+                    if (!wdir.exists()) wdir.mkdir()
+                    val wfile = File(wdir,wname)
+                    wfile.writeText(wpara)
+                    return vm.run(a.bind,vm.iput(a.data,vm.xit,wname))
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsavetext,"Fehlerhafter Filename")))
             }
             is Act     -> {  return "Test:Act"}
             else       -> {  return "Test:else"}
