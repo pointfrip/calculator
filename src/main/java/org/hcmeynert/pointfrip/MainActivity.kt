@@ -19,7 +19,7 @@ var vm = VirtualMachine()
 var itxt = vm.prelude()
 var otxt = vm.toValue(vm.deflines(vm.splitTo(itxt,"\n")))
 lateinit var et1: EditText
-//lateinit var et2: EditText
+lateinit var et2: EditText
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +45,15 @@ class MainActivity : AppCompatActivity() {
                 itxt = vm.prelude()
                 otxt = vm.toValue(vm.deflines(vm.splitTo(itxt,"\n")))
                 et1.setText("")
+                return true  }
+            R.id.result  -> {
+                //Selection.
+                val textToInsert : String = et2.text.toString()
+                val start = Math.max(et1.getSelectionStart(), 0)
+                val end = Math.max(et1.getSelectionEnd(), 0)
+                et1.getText().replace(
+                    Math.min(start, end), Math.max(start, end),
+                    textToInsert, 0, textToInsert.length  )
                 return true  }
             /*
             R.id.load  -> {
@@ -196,11 +205,11 @@ class MainActivity : AppCompatActivity() {
         val comp: Button = findViewById<View>(R.id.button2) as Button
         val par: Button = findViewById<View>(R.id.button3) as Button
         val brk: Button = findViewById<View>(R.id.button4) as Button
-        val rlt: Button = findViewById<View>(R.id.button5) as Button
+        //val rlt: Button = findViewById<View>(R.id.button5) as Button
         val lft: Button = findViewById<View>(R.id.button6) as Button
         val rgt: Button = findViewById<View>(R.id.button7) as Button
         et1 = findViewById<View>(R.id.editTextTextPersonName) as EditText
-        val et2 = findViewById<View>(R.id.editTextTextPersonName2) as EditText
+        et2 = findViewById<View>(R.id.editTextTextPersonName2) as EditText
 
         //exe.setText("Evaluate")
         //et2.setText(otxt)
@@ -259,6 +268,7 @@ class MainActivity : AppCompatActivity() {
                 et1.setSelection(p-1)
             } })
 
+        /*
         rlt.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 //Selection.
@@ -269,6 +279,7 @@ class MainActivity : AppCompatActivity() {
                     Math.min(start, end), Math.max(start, end),
                     textToInsert, 0, textToInsert.length  )
             } })
+        */
 
         lft.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {

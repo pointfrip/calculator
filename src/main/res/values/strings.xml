@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Pointfrip</string>
-    <string name="clear">Clear</string>
+    <string name="clear">clear</string>
+    <string name="result">▲result</string>
 </resources>

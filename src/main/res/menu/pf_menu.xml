@@ -6,4 +6,8 @@
           android:title="@string/clear"
           app:showAsAction="never"/>
 
+    <item android:id="@+id/result"
+        android:title="@string/result"
+        app:showAsAction="never"/>
+
 </menu>

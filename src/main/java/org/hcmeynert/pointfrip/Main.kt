@@ -2391,6 +2391,11 @@ class VirtualMachine {
                 "distr==(trans°[0] ee [1] make length°[0])°ee\n" +
                 "map0==((isatom°[0]°[0])->();([1] app ((head°[0]),tail)°[0]),(((tail°[0]),tail)°[0]) map0 [1])°ee\n" +
                 "aa0==arg map0 head°term\n" +
+                "map == reverse°[2]°((isprop°[0])->*(tail°[0]),[1],(([1] app head°[0]),[2]),)°([0],[1],(),)°ee\n" +
+                "insl==( (isatom°[0])->'_undef;(isatom°tail°[0])->(head°[0]);(([1] app ([0],[1],)°[0]),tail°tail°[0]) insl [1] )°ee\n" +
+                "insr==insrec°([1] ee reverse°[0])°ee\n" +
+                "insrec==(isatom°[1])->'_undef;(isatom°tail°[1])->(head°[1]);insrec°[0]ee([0]app([1],[0],)°[1]),tail°tail°[1]\n" +
+                "filter==( (isatom°[0])->();([1] app head°[0])->((head°[0]),(tail°[0]) filter [1]) ;(tail°[0]) filter [1] )°ee\n" +
                 "<- == (head°term) app reverse°[0]°(((isprop°[1]) and isprop°[2])->*(prop°(head°[2]),(head°[1]),[0],),(tail°[1]),(tail°[2]),)°(),(tail°term) ee arg\n" +
                 "isodd == (round imod '[2])='[1]\n" +
                 "ismat==isnum°head°head\n" +
@@ -2436,7 +2441,7 @@ fun main() {      //   help:()     new ?      help:name    save:datei1.txt     l
     //println(vm.toValue(vm.calc("_180+45")))
     //println(vm.toValue(vm.calc("lood == '[1] act arg iput '_it ee (head°term) app arg")))
     //println(vm.toValue(vm.calc("savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (head°term) app arg\n")))
-    println(vm.toValue(vm.calc("('fname loadtext)°(a:=10)°(b:=20)")))
+    println(vm.toValue(vm.calc("(1;2,3;4;5;6;7;8;9;10;) filter '('[0]=round imod '[2])")))
     //println("hallo.txt".substringAfterLast("/"))
     //"last==(isprop°'true)->*[0]°tail°[1]'()") // hier bei comment _s ?
     //val abc: Any = idreserve
