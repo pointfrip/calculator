@@ -10,4 +10,12 @@
         android:title="@string/result"
         app:showAsAction="never"/>
 
+    <item android:id="@+id/load"
+        android:title="@string/load"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/copy"
+        android:title="@string/copy"
+        app:showAsAction="never"/>
+
 </menu>

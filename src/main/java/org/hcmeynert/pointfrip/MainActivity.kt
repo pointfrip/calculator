@@ -3,6 +3,9 @@ package org.hcmeynert.pointfrip
 //import android.R
 
 //import android.R
+// Activity
+import android.app.Activity
+import android.content.*
 import android.os.Bundle
 import android.text.Layout
 import android.text.Selection
@@ -11,8 +14,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+// ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 
 
 var vm = VirtualMachine()
@@ -32,6 +40,48 @@ class MainActivity : AppCompatActivity() {
         val inflater = menuInflater
         inflater.inflate(R.menu.pf_menu, menu)
         return true
+    }
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // There are no request codes
+            val data: Intent? = result.data
+            //val selectedFile = data?.data // The URI with the location of the file
+            var txt: String = ""
+            var ln: String = ""
+            data?.data?.let {
+                contentResolver.openInputStream(it)
+            }?.let {
+                val r = BufferedReader(InputStreamReader(it))
+                while (true) {
+                    val line: String? = r.readLine() ?: break
+                    txt = txt + ln + line
+                    ln = "\n"
+                }
+            }
+            val etxt = vm.toValue(vm.deflines(vm.splitTo(txt,"\n")))
+
+            //val selectedFile = data.getData() // The URI with the location of the file
+
+            //val inputStream = getContentResolver().openInputStream(selectedFile)
+            //val allText = inputStream.bufferedReader().use(BufferedReader::readText)
+/*
+            val fname = selectedFile?.getPath()?.substringAfterLast(":/")
+
+            val rfile = File(fname) // ?.substringBeforeLast("/"),fname?.substringAfterLast("/"))
+            if (rfile.exists()) {
+                val rtxt = rfile.readText()
+                //val etxt = vm.toValue(vm.deflines(vm.splitTo(rtxt,"\n")))
+                et1.setText(rtxt)
+                //et2.setText(txt)
+            } else {
+                et1.setText("dont exs")
+            }
+*/
+            et1.setText(txt)
+            et2.setText(etxt)
+            //doSomeOperations()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -55,21 +105,35 @@ class MainActivity : AppCompatActivity() {
                     Math.min(start, end), Math.max(start, end),
                     textToInsert, 0, textToInsert.length  )
                 return true  }
-            /*
+
             R.id.load  -> {
+                /*
                 val file = File(dir, "Test.txt")
                 val contents = file.readText()
                 et1.setText(contents)
                 //doit
+                */
+
+                val intent = Intent()
+                    .setType("*/*")
+                    .setAction(Intent.ACTION_GET_CONTENT)
+                resultLauncher.launch(Intent.createChooser(intent, "Select a file"))
                 return true  }
-            */
-            /*
-            R.id.save  -> {
+            R.id.copy  -> {
+                //et1.selectAll()
+
+                val textToCopy = et1.text
+                val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clipData = ClipData.newPlainText("text", textToCopy)
+                clipboardManager.setPrimaryClip(clipData)
+
+                /*
                 if (!dir.exists()) dir.mkdir()
                 val file = File(dir,"Test.txt")
                 file.writeText("record goes here")
                 //doit
-                return true  } */
+                */
+                return true  }
             else -> return super.onOptionsItemSelected(item)
         }
     }

@@ -108,6 +108,7 @@ class VirtualMachine {
     var idterm: Ident = newidentfunc("term",::fterm)
     var idarg: Ident = newidentfunc("arg",::farg)
     var idtype: Ident = newidentfunc("type",::ftype)
+    var idat: Ident = newidentfunc("at",::fat)
     var idee: Ident = newidentfunc("ee",::fee)
     var idswee: Ident = newidentfunc("swee",::fswee)
     var idcomma: Ident = newidentfunc(",",::fcomma)
@@ -199,6 +200,7 @@ class VirtualMachine {
     var ididentlist: Ident = newidentfunc("identlist",::fidentlist)
     var idquote: Ident = newidentfunc("quote",::fquote)
     var iderror: Ident = newidentfunc("error",::ferror)
+    var idcomp: Ident = newidentfunc("comp",::fcomp)
     var idact: Ident = newidentfunc("act",::fact)
     var idbind: Ident = newidentfunc("bind",::fbind)
     var idiota: Ident = newidentfunc("iota",::fiota)
@@ -978,6 +980,39 @@ class VirtualMachine {
             else       -> etop = xundef
         } }
 
+    fun selectAt(i: Long) {
+        var found: Boolean = false
+        var n: Long = i
+        while ((etop is Cell) and !found) {
+            if (n>0) {  etop = (etop as Cell).tail;  n = n - 1  }
+            else     {  etop = (etop as Cell).head;  found = true  }
+        }
+        if (!found) {
+            if (etop !is Error) {
+                if (etop is Nil) etop = Error(idat,"Zugriff außerhalb des Tables - "+toValue(i))
+                else etop = Error(idat,"Für Zugriff Table erwartet")
+            } } }
+
+    fun fat() {
+        ee(idat)
+        if (etop !is Error) {
+            if (efun is Cell) {
+                when (etop) {
+                    is Double -> {  val i: Long = Math.round(etop as Double)
+                                    etop = efun
+                                    if (i >= 0.toLong()) selectAt(i)
+                                    else etop = Error(idat,"Zugriff außerhalb des Tables - "+toValue(i))
+                                 }
+                    is Long   -> {  val i: Long = etop as Long
+                                    etop = efun
+                                    if (i >= 0.toLong()) selectAt(i)
+                                    else etop = Error(idat,"Zugriff außerhalb des Tables - "+toValue(i))
+                                 }
+                    else      -> etop = Error(idat,"Zahl für Operand[1] erwartet")
+                }
+            } else etop = Error(idat,"Prop für Operand[0] erwartet")  }
+        efun = xnil  }
+
     fun fee() {
         ee(idee)
         if (etop !is Error) etop = Cell(efun,xcons,Cell(etop,xcons,Nil()))
@@ -1658,6 +1693,11 @@ class VirtualMachine {
             if (efun is Ident) etop = Error(efun,etop)
             else etop = Error(iderror,"Ident Typ für Operand[0] erwartet")
         }
+        efun = xnil  }
+
+    fun fcomp() {
+        ee(idcomp)
+        if (etop !is Error) etop = Cell(efun,idcompose,etop)
         efun = xnil  }
 
     fun fact() {
@@ -2441,7 +2481,7 @@ fun main() {      //   help:()     new ?      help:name    save:datei1.txt     l
     //println(vm.toValue(vm.calc("_180+45")))
     //println(vm.toValue(vm.calc("lood == '[1] act arg iput '_it ee (head°term) app arg")))
     //println(vm.toValue(vm.calc("savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (head°term) app arg\n")))
-    println(vm.toValue(vm.calc("(1;2,3;4;5;6;7;8;9;10;) filter '('[0]=round imod '[2])")))
+    println(vm.toValue(vm.calc("(a;b;c;d;e;f;) at _1")))
     //println("hallo.txt".substringAfterLast("/"))
     //"last==(isprop°'true)->*[0]°tail°[1]'()") // hier bei comment _s ?
     //val abc: Any = idreserve

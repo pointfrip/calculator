@@ -39,7 +39,7 @@ tools:context=".MainActivity">
 
         <Button
             android:id="@+id/button"
-            android:layout_width="85dp"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:text="CALC"

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Pointfrip</string>
-    <string name="clear">clear</string>
-    <string name="result">▲result</string>
+    <string name="clear">Clear</string>
+    <string name="result">△ Result</string>
+    <string name="load">Load External</string>
+    <string name="copy">Copy Input</string>
 </resources>
