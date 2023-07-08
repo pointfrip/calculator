@@ -194,6 +194,7 @@ class VirtualMachine {
     var idwhile: Ident = newidentfunc("->*",::fwhile)
     var idaa: Ident = newidentfunc("aa",::faa)
     var idins: Ident = newidentfunc("\\",::fins)
+    var idtry: Ident = newidentfunc("try",::ftry)
     var idname: Ident = newidentfunc("name",::fname)
     var idbody: Ident = newidentfunc("body",::fbody)
     var idinfo: Ident = newidentfunc("info",::finfo)  // ??? noch nötig?
@@ -665,8 +666,8 @@ class VirtualMachine {
                               }
                 is Quote   -> {  if (etop !is Error) etop = (efun as Quote).value  }
                 is Ivar    -> {  if (etop !is Error) etop = iget(idipr,etop,(efun as Ivar).value)  }
-                is Combine -> { }
-                is Act     -> { }
+                //is Combine -> { }
+                //is Act     -> { }
                 else       -> {  if (etop !is Error) etop = efun  }  // is Double,Nil,String,true,false,Error
             }
         } while (!equit)
@@ -718,17 +719,51 @@ class VirtualMachine {
             is Combine -> {  val x: Combine = etop as Combine
                 if (x.term is Cell) {
                     efun = x.term.tail
-                    etop = x.arg  // wenn arg is Error (?)
-                    do {  eval()
-                          if (ecall != 0) func[-ecall]()
-                    } while (!equit)
-                    if (etop is Error) { }
-                    else {  efun = x.term.head
-                            equit = false  }
+                    etop = x.arg
+                    if (etop !is Error) {
+                        do {  eval()
+                              if (ecall != 0) func[-ecall]()
+                        } while (!equit)
+                        if (etop !is Error) {  efun = x.term.head
+                                               equit = false  }  }
                 } else etop = Error(idcompose,"In compose Term erwartet")  }
             is Error   -> { }
             else       -> etop = Error(idcompose,efnnocombine) //?
         } }
+
+    // {Combine (err try a ; b c) xyz}
+    fun ftry() {
+        when (etop) {
+            is Combine -> {
+                if ((etop as Combine).term is Cell) {
+                    val t: Cell = (etop as Combine).term as Cell
+                    val a: Any = (etop as Combine).arg
+                    if (a is Error) etop = a
+                    else {  efun = t.head
+                            etop = a
+                            do {  eval()
+                                  if (ecall != 0) func[-ecall]()
+                            } while (!equit)
+                            val x: Any = etop
+                            efun = t.tail
+                            etop =  a
+                            do {  eval()
+                                  if (ecall != 0) func[-ecall]()
+                            } while (!equit)
+                            if (etop is Cell) {
+                                if (x is Error) {
+                                    efun = (etop as Cell).head
+                                    etop = Cell(Cell(x.eident,iderror,x.value),xcons,Cell(a,xcons,Nil()))
+                                    equit = false
+                                } else {  efun = (etop as Cell).tail
+                                          etop = Cell(x,xcons,Cell(a,xcons,Nil()))
+                                          equit = false  }
+                            } else if (etop !is Error)
+                                       etop = Error(idtry,"Cell für Operand[1] erwartet")  }
+                } else etop = Error(idtry,"Prop als Term erwartet")  }
+            is Error   -> { }
+            else       -> etop = Error(idtry,"für 'try' Combine Typ erwartet")
+        }  }
 
     // {Combine (isprop -> a ; b c) xyz}
     fun fcond() {
@@ -813,21 +848,20 @@ class VirtualMachine {
         when (etop) {
             is Combine -> {  if ((etop as Combine).term is Cell) {
                                  val f = ((etop as Combine).term as Cell).head
-                                 var list = (etop as Combine).arg  // wenn arg is Error ???
+                                 var list = (etop as Combine).arg
                                  var res: Any = Nil()
-                                 while (list is Cell) {
-                                     efun = f
-                                     etop = list.head
-                                     do {  eval()
-                                           if (ecall != 0) func[-ecall]()
-                                     } while (!equit)
-                                     if (etop is Error) break
-                                     res = Cell(etop,xcons,res)
-                                     list = list.tail
-                                 }
-                                 if (etop !is Error) etop = nreverse(res)
-                             } else etop = Error(idaa,"Prop als Term erwartet")
-                          }
+                                 if (list is Error) etop = list
+                                 else {  while (list is Cell) {
+                                               efun = f
+                                               etop = list.head
+                                               do {  eval()
+                                                     if (ecall != 0) func[-ecall]()
+                                               } while (!equit)
+                                               if (etop is Error) break
+                                               res = Cell(etop,xcons,res)
+                                               list = list.tail  }
+                                         if (etop !is Error) etop = nreverse(res)  }
+                             } else etop = Error(idaa,"Prop als Term erwartet")  }
             is Error   -> { }
             else       -> etop = Error(idaa,"Combine als Typ erwartet")
         } }
@@ -855,11 +889,9 @@ class VirtualMachine {
                                 list = list.tail  }
                             if (etop !is Error) etop = res
                         } else etop = Error(idins,"Fehler in reverse")
-
                     } else if (list is Error) etop = list
-                    else etop = xundef
-                } else etop = Error(idins,"Cell als Term erwartet")
-            }
+                      else etop = xundef
+                } else etop = Error(idins,"Cell als Term erwartet")  }
             is Error   -> { }
             else       -> etop = Error(idins,"Combine als Typ erwartet")
         } }
@@ -870,18 +902,20 @@ class VirtualMachine {
                 val x: Combine = etop as Combine
                 if (x.term is Cell) {
                     efun = x.term.head
-                    etop = x.arg  // wenn arg is Error (?)
-                    do {  eval()
-                          if (ecall != 0) func[-ecall]()
-                    } while (!equit)
-                    if (etop is Error) { }
-                    else {  val y: Any = etop
+                    etop = x.arg
+                    if (etop !is Error) {
+                        do {  eval()
+                              if (ecall != 0) func[-ecall]()
+                        } while (!equit)
+                        if (etop !is Error) {
+                            val y: Any = etop
                             efun = x.term.tail
                             etop = x.arg
                             do {  eval()
                                   if (ecall != 0) func[-ecall]()
                             } while (!equit)
-                            efun = y  }
+                            efun = y
+                        }  }
                 } else etop = Error(ide,"Cell als Term erwartet")
             }
             is Cell    -> {
@@ -896,7 +930,7 @@ class VirtualMachine {
                 } else etop = Error(ide,"; erwartet")  //?
             }
             is Error   -> { }
-            else       -> etop = Error(ide,"provisorium von ee")  // ???
+            else       -> etop = Error(ide,"Liste oder Combine Typ erwartet")
         } }
 
     fun fundef() {  if (etop !is Error) etop = Error(idipr,"Funktion ist nicht definiert")  }
@@ -2478,10 +2512,10 @@ fun main() {      //   help:()     new ?      help:name    save:datei1.txt     l
     //println(vm.toValue(vm.calc("mul==(((ismat°[0]) and ismat°[1])->([0] MM [1]);fail)°ee")))
     //(""last==(isprop°'true)->*[0]°tail°[1]'()")
     //println(vm.toValue(vm.calc("A == ((1;2;3;);(4;5;8;);(7;8;9;);)")))
-    //println(vm.toValue(vm.calc("_180+45")))
+    //println(vm.toValue(vm.calc("try == id")))
     //println(vm.toValue(vm.calc("lood == '[1] act arg iput '_it ee (head°term) app arg")))
     //println(vm.toValue(vm.calc("savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (head°term) app arg\n")))
-    println(vm.toValue(vm.calc("(a;b;c;d;e;f;) at _1")))
+    println(vm.toValue(vm.calc("123")))
     //println("hallo.txt".substringAfterLast("/"))
     //"last==(isprop°'true)->*[0]°tail°[1]'()") // hier bei comment _s ?
     //val abc: Any = idreserve
