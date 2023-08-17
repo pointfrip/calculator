@@ -116,7 +116,9 @@ class VirtualMachine {
     var idadd: Ident = newidentfunc("+",::fadd)
     var idsub: Ident = newidentfunc("-",::fsub)
     var idmul: Ident = newidentfunc("*",::fmul)
+    var idmul2: Ident = newidentfunc("×",::fmul)
     var iddiv: Ident = newidentfunc("/",::fdiv)
+    var iddiv2: Ident = newidentfunc("÷",::fdiv)
     var idpow: Ident = newidentfunc("^",::fpow)
     var ididiv: Ident = newidentfunc("idiv",::fidiv)
     var idimod: Ident = newidentfunc("imod",::fimod)
@@ -190,6 +192,7 @@ class VirtualMachine {
     var idapplic: Ident = newidentfunc(":",::fapplic)
     var idcompose: Ident = newidentfunc("°",::fcompose)
     var idcompose2: Ident = newidentfunc("o",::fcompose)
+    var idcompose3: Ident = newidentfunc("∘",::fcompose)
     var idcond: Ident = newidentfunc("->",::fcond)
     var idwhile: Ident = newidentfunc("->*",::fwhile)
     var idaa: Ident = newidentfunc("aa",::faa)
@@ -2515,7 +2518,7 @@ fun main() {      //   help:()     new ?      help:name    save:datei1.txt     l
     //println(vm.toValue(vm.calc("try == id")))
     //println(vm.toValue(vm.calc("lood == '[1] act arg iput '_it ee (head°term) app arg")))
     //println(vm.toValue(vm.calc("savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (head°term) app arg\n")))
-    println(vm.toValue(vm.calc("123")))
+    println(vm.toValue(vm.calc("sin∘rad∘45")))
     //println("hallo.txt".substringAfterLast("/"))
     //"last==(isprop°'true)->*[0]°tail°[1]'()") // hier bei comment _s ?
     //val abc: Any = idreserve

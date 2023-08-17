@@ -139,6 +139,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun doAct(a: Act): Any {
+        try {
         when (a.num) {
             1.toLong() -> {
                 val rget = vm.get(idload,a.data,vm.xit)
@@ -226,6 +227,7 @@ class MainActivity : AppCompatActivity() {
             is Act     -> {  return "Test:Act"}
             else       -> {  return "Test:else"}
         }
+        } catch (e: Exception) {  return Error(vm.idipr,e.message as String)  }
     }
 
     fun selectline(txt: String,n: Int): String {
