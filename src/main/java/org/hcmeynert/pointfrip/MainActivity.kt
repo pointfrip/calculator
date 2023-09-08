@@ -160,8 +160,8 @@ class MainActivity : AppCompatActivity() {
                         val txt = vm.toValue(vm.deflines(vm.splitTo(rtxt,"\n")))
                         runOnUiThread {  et1.setText(rtxt)  }
                         return vm.run(a.bind,a.data)
-                    } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idload,"Datei existiert nicht")))
-                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idload,"Fehlerhafter Filename")))
+                    } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idload,"File not found")))
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idload,"Error in filename")))
             }
             2.toLong() -> {
                 val wget = vm.iget(idsave,a.data,vm.xit)
@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                     val wtxt = et1.text.toString()
                     wfile.writeText(wtxt)
                     return vm.run(a.bind,a.data)
-                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsave,"Fehlerhafter Filename")))
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsave,"Error in filename")))
             }
             3.toLong() -> {
                 val fpath = applicationContext.filesDir
@@ -203,14 +203,14 @@ class MainActivity : AppCompatActivity() {
                     if (rfile.exists()) {
                         val rtxt = rfile.readText()
                         return vm.run(a.bind,vm.iput(a.data,vm.xit,rtxt))
-                    } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idloadtext,"Datei existiert nicht")))
-                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idloadtext,"Fehlerhafter Filename")))
+                    } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idloadtext,"File not found")))
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idloadtext,"Error in filename")))
             }
             5.toLong() -> {
                 val wself = vm.iget(idsavetext,a.data,vm.xself)
                 val wpara = vm.iget(idsavetext,a.data,vm.xpara)
                 if (wpara !is String)
-                    return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsavetext,"String als Operand[1] erwartet")))
+                    return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsavetext,"String expected as operand[1]")))
                 val wname = when (wself) {
                     is Ident  -> wself.pname.substringAfterLast("/")
                     is String -> wself.substringAfterLast("/")
@@ -222,7 +222,7 @@ class MainActivity : AppCompatActivity() {
                     val wfile = File(wdir,wname)
                     wfile.writeText(wpara)
                     return vm.run(a.bind,vm.iput(a.data,vm.xit,wname))
-                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsavetext,"Fehlerhafter Filename")))
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsavetext,"Error in filename")))
             }
             is Act     -> {  return "Test:Act"}
             else       -> {  return "Test:else"}

@@ -24,14 +24,83 @@ const val ctnormal: String  = ctnumber + ctsmall + ctcapital
 
 // ----- error messages
 
-const val efnnocombine: String    = "Funktion erwartet den Typ Combine"
-const val ecomddotnoend: String   = ".. erwartet nachfolgend nur einen Wert."
-const val ecomnbconsnoduo: String = "Rückverkettung erwartet ein Duo im Compilerstack"
+const val ecomddotnoend: String   = ".. expects only one subsequent value"
+const val ecomnbconsnoduo: String = "Backchaining awaits a duo in the compiler stack"
+const val einitarrayoverflow: String = "the pcounter exceeds the array size"
+const val ecomtableunexpend: String = "unexpected ending, ) missing"
+const val ecomonlybracketend: String = "] without [ in front"
+const val ecomonlycurlyend: String = "} without { before"
+const val ecomddotnoinfix: String = ".. not allowed at infix position"
+const val ecomintnoint: String = "Integer value in [ ] missing"
+const val ecomintexpint: String = "Integer value expected in [...]"
+const val ecomintnobracketend: String = "] missing in integer value"
+const val ecomquoteunexpend: String = "unexpected end at Quote"
+const val ecomonlyparenend: String = ") without ( before"
+const val ecomquoteunexpddot: String = "unexpected .. in Quote"
+const val ecomstringunexpend: String = "unexpected end of String scan"
+const val ecomivarunexpend: String = "unexpected end at Ivar"
+const val ecomivarnosyntax: String = "no Ivar-Syntax: #"
+const val ecomivaridentexp: String = "expected the type Ident for Ivar syntax"
 
-const val efnlist3exp: String = "Liste mit 3 Elementen erwartet"
-const val efnnumexp: String = "Zahl als Typ erwartet"
-const val efnstringexp: String = "String als Typ erwartet"
-const val efnidentexp: String = "Ident als Typ erwartet"
+const val eselnotinrange: String = "Access outside the table"
+const val eseltableexp: String = "Expected a Table for access"
+const val eevalcalcstop: String  = "CALC-STOP"
+const val eevalnoprim: String = "Primitive not in FuncTable"
+const val eevalidentunbound: String = "Ident is not bound"
+
+const val ecbnocombine: String = "Operation expects the type Combine"
+const val ecbprop2exp: String = "Prop expected with 2 elements as Term"
+const val ecbpropastermexp: String = "Prop expected as Term"
+const val ecbop1expprop: String = "Prop expected for operand[1]"
+const val ecbconsexp: String = "; expected"
+const val ecblistorcombiexp: String = "List or Combine type expected"
+
+const val eopboolasop0exp: String = "Bool expected for operand[0]"
+const val eopboolasop1exp: String = "Bool expected for operand[1]"
+const val eoppropasop0exp: String = "Prop expected for operand[0]"
+const val eoppropasop1exp: String = "Prop expected for operand[1]"
+const val eopnumasop0exp: String = "Number expected as operand[0]"
+const val eopnumasop1exp: String = "Number expected for operand[1]"
+const val eopintasop0exp: String = "Integer expected as operand[0]"
+const val eopintasop1exp: String = "Integer expected as operand[1]"
+const val eoprealasop0exp: String = "Real expected as operand[0]"
+const val eoprealasop1exp: String = "Real expected as operand[1]"
+const val eopidentasop0exp: String = "Ident type expected for operand[0]"
+const val eopidentasop1exp: String = "Ident type expected for operand[1]"
+const val eopintoractasop0exp: String = "Integer or Act expected as operand[0]"
+const val eopdictasop1exp: String = "Dict expected as operand[1]"
+const val eopactasop0exp: String = "Act expected for operand[0]"
+const val eoptableorlistasop0exp: String = "Table or list expected as operand[0]"
+const val eoppropornullasop0exp: String = "Prop or null expected as operand[0]"
+const val eoplistasop0exp: String = "List expected for operand[0]"
+const val eoplistasop1exp: String = "List expected for operand[1]"
+const val eopidentasfstofop1exp: String = "Ident expected for [0]°operand[1]"
+const val eoplist2asop1exp: String = "List with 2 elements expected for operand[1]"
+const val eopstringasop0exp: String = "String expected as operand[0]"
+const val eopstringasop1exp: String = "String expected as operand[1]"
+const val eopdivbyzero: String = "Division by zero"
+const val eoptypenocompare: String = "Types not comparable"
+const val eopunknownerr: String = "unknown error"
+
+const val efnundef: String = "Function is not defined"
+const val efnnocombine: String = "Function expects the type Combine"
+const val efnerrinrev: String = "Error in reverse"
+const val efnlist3exp: String = "Expected list of 3 items"
+const val efnnumexp: String = "Number expected as type"
+const val efnstringexp: String = "String expected as type"
+const val efnidentexp: String = "Ident expected as type"
+const val efnboolexp: String = "Bool expected as type"
+const val efnpropnullstringexp: String = "Prop, null or string expected as type"
+const val efnselnotinrange: String = "Access outside the table"
+const val efnseltableexp: String = "Expected for access a Table"
+const val efntableforidentgetexp: String = "Table expected for Ident-Get"
+const val efntableforgetexp: String = "Table expected for Get"
+const val efndictexp: String = "Dict expected as argument"
+const val efnstringasarg0exp: String = "String expected for argument[0]"
+const val efnnumasarg1exp: String = "Number expected for argument[1]"
+const val efnnumasarg2exp: String = "Number expected for argument[2]"
+const val efnlistofstringsexp: String = "List of strings expected"
+const val efnunknownerr: String = "unknown error"
 
 // -------------------------------------- datatypes as classes ---------------------------------------
 
@@ -292,7 +361,7 @@ class VirtualMachine {
 
     fun newidentfunc(pn: String, fn: ()->Unit ): Ident {
         pcounter = pcounter + 1
-        if (pcounter >= maxfunc) throw Exception("der pcounter übersteigt die Arraygröße") // einit
+        if (pcounter >= maxfunc) throw Exception(einitarrayoverflow)
         func[pcounter.toInt()] = fn
         val id: Ident = Ident(pn,-pcounter)
         identlist = Cell(id,xcons,identlist)
@@ -343,8 +412,8 @@ class VirtualMachine {
             is Combine -> return "{"+ctcombine+" "+toValue(i.term)+" "+toValue(i.arg)+"}"
             is Error   -> return "{"+cterror+" "+toValue(i.eident)+" "+toValue(i.value)+"}"
             is Act     -> return "{"+ctact+" "+toValue(i.num)+" "+toValue(i.data)+" "+toValue(i.bind)+"}"
-            true       -> return cttrue  // oder idtrue ?
-            false      -> return ctfalse // oder isfalse ?
+            true       -> return cttrue
+            false      -> return ctfalse
             else       -> return "{printerror}"
         } }
 
@@ -416,13 +485,13 @@ class VirtualMachine {
         comComment()
         while (item!=")") {
             when (item) {  // head
-                ""       -> throw Exception("unerwartetes Ende, ) fehlt") // ecomtableunexpend
+                ""       -> throw Exception(ecomtableunexpend)
                 "("      -> comTable()
                 //  ")"    ---> while
                 "["      -> comInt()
-                "]"      -> throw Exception("] ohne [ davor") // ecomonlybracketend
+                "]"      -> throw Exception(ecomonlybracketend)
                 "{"      -> comCurly()
-                "}"      -> throw Exception("} ohne { zuvor") // ecomonlycurlyend
+                "}"      -> throw Exception(ecomonlycurlyend)
                 ctquote  -> comQuote()
                 ctquote2 -> comString()
                 ctivar   -> comIvar()
@@ -434,18 +503,18 @@ class VirtualMachine {
             item = scanItem()
             comComment()
             when (item) {  // infix
-                ""       -> throw Exception("unerwartetes Ende, ) fehlt") // ecomtableunexpend
+                ""       -> throw Exception(ecomtableunexpend)
                 "("      -> comTable()
                 ")"      -> { clistPut(xsingle); break }
                 "["      -> comInt()
-                "]"      -> throw Exception("] ohne [ davor") // ecomonlybracketend
+                "]"      -> throw Exception(ecomonlybracketend)
                 "{"      -> comCurly()
-                "}"      -> throw Exception("} ohne { zuvor") // ecomonlycurlyend
+                "}"      -> throw Exception(ecomonlycurlyend)
                 ctquote  -> comQuote()
                 ctquote2 -> comString()
                 ctivar   -> comIvar()
                 ctdef    -> clistPut(iddef)
-                ctddot   -> throw Exception(".. an Infixstelle nicht erlaubt") // ecomddotnoinfix
+                ctddot   -> throw Exception(ecomddotnoinfix)
                 cttrue   -> clistPut(true)
                 ctfalse  -> clistPut(false)
                 else     -> atom(item) }
@@ -455,12 +524,12 @@ class VirtualMachine {
 
     fun comInt() {
         item = scanItem()
-        if (item=="]") throw Exception("Integerwert in [] fehlt") // ecomintnoint
+        if (item=="]") throw Exception(ecomintnoint)
         val numstr: String = item.replace("_","-")
         if (isLong(numstr)) clistPut(numstr.toLong())
-        else throw Exception("Integerwert in [...] erwartet") // ecomintexpint
+        else throw Exception(ecomintexpint)
         item = scanItem()
-        if (item!="]") throw Exception("] fehlt in Integerwert") // ecomintnobracketend
+        if (item!="]") throw Exception(ecomintnobracketend)
     }
 
     fun comCurly() {
@@ -471,18 +540,18 @@ class VirtualMachine {
         item = scanItem()
         comComment()
         when (item) {
-            ""       -> throw Exception("unerwartetes Ende bei Quote") // ecomquoteunexpend
+            ""       -> throw Exception(ecomquoteunexpend)
             "("      -> comTable()
-            ")"      -> throw Exception(") ohne ( zuvor") // ecomonlyparenend
+            ")"      -> throw Exception(ecomonlyparenend)
             "["      -> comInt()
-            "]"      -> throw Exception("] ohne [ davor") // ecomonlybracketend
+            "]"      -> throw Exception(ecomonlybracketend)
             "{"      -> comCurly()
-            "}"      -> throw Exception("} ohne { zuvor") // ecomonlycurlyend
+            "}"      -> throw Exception(ecomonlycurlyend)
             ctquote  -> comQuote()
             ctquote2 -> comString()
             ctivar   -> comIvar()
             ctdef    -> clistPut(iddef) // ???
-            ctddot   -> throw Exception("unerwartetes .. in Quote") // ecomquoteunexpddot
+            ctddot   -> throw Exception(ecomquoteunexpddot)
             cttrue   -> clistPut(true)
             ctfalse  -> clistPut(false)
             else     -> atom(item) }
@@ -491,7 +560,7 @@ class VirtualMachine {
     fun comString() {
         val k = ix
         do {  ix = ix.inc()  // backslash einbauen!
-              if (ix>txt.length) throw Exception("unerwartetes Ende bei String-Scan")
+              if (ix>txt.length) throw Exception(ecomstringunexpend)
         } while (txt.substring(ix-1,ix)!=ctquote2)
         clistPut(txt.substring(k,ix-1))
     }
@@ -500,14 +569,14 @@ class VirtualMachine {
         item = scanItem()
         comComment()
         when (item) {
-            ""      -> throw Exception("unerwartetes Ende bei Ivar")
+            ""      -> throw Exception(ecomivarunexpend)
             "(", ")", "[", "]", "{", "}", ctquote, ctquote2, ctivar, ctddot, cttrue,
-            ctfalse -> throw Exception("keine Ivar-Syntax: #"+item+" ")
+            ctfalse -> throw Exception(ecomivarnosyntax+item+" ")
             else    -> atom(item)
         }
         if ((cstack as Cell).head is Ident)
             (cstack as Cell).head = Ivar((cstack as Cell).head as Ident)
-        else throw Exception("für Ivar-Syntax den Typ Ident erwartet")
+        else throw Exception(ecomivaridentexp)
     }
 
     fun findIdent(str: String): Any {
@@ -542,11 +611,11 @@ class VirtualMachine {
             when (item) {  // head
                 //  ""      ---> while
                 "("       -> comTable()
-                ")"       -> throw Exception(") ohne ( zuvor") // ecomonlyparenend
+                ")"       -> throw Exception(ecomonlyparenend)
                 "["       -> comInt()
-                "]"       -> throw Exception("] ohne [ davor") // ecomonlybracketend
+                "]"       -> throw Exception(ecomonlybracketend)
                 "{"       -> comCurly()
-                "}"       -> throw Exception("} ohne { zuvor") // ecomonlycurlyend
+                "}"       -> throw Exception(ecomonlycurlyend)
                 ctquote   -> comQuote()
                 ctquote2  -> comString()
                 ctivar    -> comIvar()
@@ -560,16 +629,16 @@ class VirtualMachine {
             when (item) {  // infix
                 ""        -> clistPut(xsingle)
                 "("       -> comTable()
-                ")"       -> throw Exception(") ohne ( zuvor") // ecomonlyparenend
+                ")"       -> throw Exception(ecomonlyparenend)
                 "["       -> comInt()
-                "]"       -> throw Exception("] ohne [ zuvor") // ecomonlybracketend
+                "]"       -> throw Exception(ecomonlybracketend)
                 "{"       -> comCurly()
-                "}"       -> throw Exception("} ohne { zuvor") // ecomonlycurlyend
+                "}"       -> throw Exception(ecomonlycurlyend)
                 ctquote   -> comQuote()
                 ctquote2  -> comString()
                 ctivar    -> comIvar()
                 ctdef     -> clistPut(iddef)
-                ctddot    -> throw Exception(".. an Infixstelle nicht erlaubt") // ecomddotnoinfix
+                ctddot    -> throw Exception(ecomddotnoinfix)
                 cttrue    -> clistPut(true)
                 ctfalse   -> clistPut(false)
                 else      -> atom(item) }
@@ -637,15 +706,15 @@ class VirtualMachine {
         }
         if (!found) {
             if (etop !is Error) {
-                if (etop is Nil) etop = Error(idipr,"Zugriff außerhalb des Tables - ["+i+"] ")
-                else etop = Error(idipr,"Für Zugriff Table erwartet")
+                if (etop is Nil) etop = Error(idipr,eselnotinrange+" - ["+i+"] ")
+                else etop = Error(idipr,eseltableexp)
         } } }
 
     fun eval() {
         var x: Any = xnil  // Nil()
         ecall = 0
         do {  equit = true
-            if (!runvm) throw Exception("CALC-STOP")
+            if (!runvm) throw Exception(eevalcalcstop)
             when (efun) {
                 is Cell    -> {  x = (efun as Cell).infix
                                  if (x == xsingle) efun = (efun as Cell).head
@@ -657,15 +726,15 @@ class VirtualMachine {
                                      eindex = x
                                      if (eindex >= 0) eselect(eindex)
                                      else if (eindex > -maxfunc) ecall = eindex.toInt()
-                                     else etop = Error(idipr,"Primitiv nicht im FuncTable")
+                                     else etop = Error(idipr,eevalnoprim)
                                  } else if (x == xreserve) {
-                                     etop = Error(idipr,"Ident ist nicht gebunden - "+toValue(efun)+" ")
+                                     etop = Error(idipr,eevalidentunbound+" - "+toValue(efun)+" ")
                                  } else {  efun = x  ;  equit = false  }
                               } // hier xcons prüfen (schneller) ?
                 is Long    -> {  eindex = efun as Long
                                  if (eindex >= 0) eselect(eindex)
                                  else if (eindex > -maxfunc) ecall = eindex.toInt()
-                                 else etop = Error(idipr,"Primitiv nicht im FuncTable")
+                                 else etop = Error(idipr,eevalnoprim)
                               }
                 is Quote   -> {  if (etop !is Error) etop = (efun as Quote).value  }
                 is Ivar    -> {  if (etop !is Error) etop = iget(idipr,etop,(efun as Ivar).value)  }
@@ -710,11 +779,11 @@ class VirtualMachine {
                             efun = x.term.head
                             etop = (etop as Cell).head
                             equit = false
-                        } else etop = Error(idapplic,"Prop mit 2 Elementen als Term erwartet")
+                        } else etop = Error(idapplic,ecbprop2exp)
                     }
-                } else etop = Error(idapplic,"Prop als Term erwartet")  }
+                } else etop = Error(idapplic,ecbpropastermexp)  }
             is Error   -> { }
-            else       -> etop = Error(idapplic,efnnocombine)
+            else       -> etop = Error(idapplic,ecbnocombine)
         }  }
 
     fun fcompose() {
@@ -729,9 +798,9 @@ class VirtualMachine {
                         } while (!equit)
                         if (etop !is Error) {  efun = x.term.head
                                                equit = false  }  }
-                } else etop = Error(idcompose,"In compose Term erwartet")  }
+                } else etop = Error(idcompose,ecbpropastermexp)  }
             is Error   -> { }
-            else       -> etop = Error(idcompose,efnnocombine) //?
+            else       -> etop = Error(idcompose,ecbnocombine)
         } }
 
     // {Combine (err try a ; b c) xyz}
@@ -762,10 +831,10 @@ class VirtualMachine {
                                           etop = Cell(x,xcons,Cell(a,xcons,Nil()))
                                           equit = false  }
                             } else if (etop !is Error)
-                                       etop = Error(idtry,"Cell für Operand[1] erwartet")  }
-                } else etop = Error(idtry,"Prop als Term erwartet")  }
+                                       etop = Error(idtry,ecbop1expprop)  }
+                } else etop = Error(idtry,ecbpropastermexp)  }
             is Error   -> { }
-            else       -> etop = Error(idtry,"für 'try' Combine Typ erwartet")
+            else       -> etop = Error(idtry,ecbnocombine)
         }  }
 
     // {Combine (isprop -> a ; b c) xyz}
@@ -796,13 +865,13 @@ class VirtualMachine {
                                         false -> {  efun = (etop as Cell).tail
                                                     etop = a
                                                     equit = false  }
-                                        else  -> etop = Error(idcond,"Bool für Operand[0] erwartet")
+                                        else  -> etop = Error(idcond,eopboolasop0exp)
                                 } } else if (etop !is Error)
-                                             etop = Error(idcond,"Cell für Operand[1] erwartet")
+                                             etop = Error(idcond,eoppropasop1exp)
                             } }
-                } else etop = Error(idcond,"Prop als Term erwartet")  }
+                } else etop = Error(idcond,ecbpropastermexp)  }
             is Error   -> { }
-            else       -> etop = Error(idcond,"für '->' Combine Typ erwartet")
+            else       -> etop = Error(idcond,ecbnocombine)
         } }
 
     // {Combine (p ->* b ) a}
@@ -835,15 +904,15 @@ class VirtualMachine {
                                         } while (!equit)
                                         if (etop is Error) break
                                         if (etop !is Boolean) {
-                                            etop = Error(idwhile,"Bool als Operator[0] erwartet")
+                                            etop = Error(idwhile,eopboolasop0exp)
                                             break
                                         }  }
                                     if (etop !is Error) etop = a
-                                } else etop = Error(idwhile,"Bool als Operator[0] erwartet")
+                                } else etop = Error(idwhile,eopboolasop0exp)
                             }  }
-                } else etop = Error(idwhile,"Prop als Term erwartet")  }
+                } else etop = Error(idwhile,ecbpropastermexp)  }
             is Error   -> { }
-            else       -> etop = Error(idwhile,"für '->*' Combine Typ erwartet")
+            else       -> etop = Error(idwhile,ecbnocombine)
         }  }
 
     // {combine (f aa) list}
@@ -864,9 +933,9 @@ class VirtualMachine {
                                                res = Cell(etop,xcons,res)
                                                list = list.tail  }
                                          if (etop !is Error) etop = nreverse(res)  }
-                             } else etop = Error(idaa,"Prop als Term erwartet")  }
+                             } else etop = Error(idaa,ecbpropastermexp)  }
             is Error   -> { }
-            else       -> etop = Error(idaa,"Combine als Typ erwartet")
+            else       -> etop = Error(idaa,ecbnocombine)
         } }
 
     // {Combine (f \) xyz}
@@ -891,12 +960,12 @@ class VirtualMachine {
                                 res = etop
                                 list = list.tail  }
                             if (etop !is Error) etop = res
-                        } else etop = Error(idins,"Fehler in reverse")
+                        } else etop = Error(idins,efnerrinrev)
                     } else if (list is Error) etop = list
                       else etop = xundef
-                } else etop = Error(idins,"Cell als Term erwartet")  }
+                } else etop = Error(idins,ecbpropastermexp)  }
             is Error   -> { }
-            else       -> etop = Error(idins,"Combine als Typ erwartet")
+            else       -> etop = Error(idins,ecbnocombine)
         } }
 
     fun ee(ide: Ident) {
@@ -919,7 +988,7 @@ class VirtualMachine {
                             } while (!equit)
                             efun = y
                         }  }
-                } else etop = Error(ide,"Cell als Term erwartet")
+                } else etop = Error(ide,ecbpropastermexp)
             }
             is Cell    -> {
                 if ((etop as Cell).infix == xcons) {
@@ -928,16 +997,15 @@ class VirtualMachine {
                     if (etop is Cell) {
                         if ((etop as Cell).infix == xcons) {
                             etop = (etop as Cell).head
-                        } else if (etop !is Error) etop = Error(ide,"; erwartet")  // ?
-                    } else etop = Error(ide,"; erwartet")  // ?
-                } else etop = Error(ide,"; erwartet")  //?
+                        } else if (etop !is Error) etop = Error(ide,ecbconsexp)
+                    } else etop = Error(ide,ecbconsexp)
+                } else etop = Error(ide,ecbconsexp)
             }
             is Error   -> { }
-            else       -> etop = Error(ide,"Liste oder Combine Typ erwartet")
+            else       -> etop = Error(ide,ecblistorcombiexp)
         } }
 
-    fun fundef() {  if (etop !is Error) etop = Error(idipr,"Funktion ist nicht definiert")  }
-    // eundeffnnotdef?
+    fun fundef() {  if (etop !is Error) etop = Error(idipr,efnundef)  }
 
     fun fid()    {  }  // etop = etop
 
@@ -1026,8 +1094,8 @@ class VirtualMachine {
         }
         if (!found) {
             if (etop !is Error) {
-                if (etop is Nil) etop = Error(idat,"Zugriff außerhalb des Tables - "+toValue(i))
-                else etop = Error(idat,"Für Zugriff Table erwartet")
+                if (etop is Nil) etop = Error(idat,efnselnotinrange+" - "+toValue(i))
+                else etop = Error(idat,efnseltableexp)
             } } }
 
     fun fat() {
@@ -1038,16 +1106,16 @@ class VirtualMachine {
                     is Double -> {  val i: Long = Math.round(etop as Double)
                                     etop = efun
                                     if (i >= 0.toLong()) selectAt(i)
-                                    else etop = Error(idat,"Zugriff außerhalb des Tables - "+toValue(i))
+                                    else etop = Error(idat,efnselnotinrange+" - "+toValue(i))
                                  }
                     is Long   -> {  val i: Long = etop as Long
                                     etop = efun
                                     if (i >= 0.toLong()) selectAt(i)
-                                    else etop = Error(idat,"Zugriff außerhalb des Tables - "+toValue(i))
+                                    else etop = Error(idat,efnselnotinrange+" - "+toValue(i))
                                  }
-                    else      -> etop = Error(idat,"Zahl für Operand[1] erwartet")
+                    else      -> etop = Error(idat,eopnumasop1exp)
                 }
-            } else etop = Error(idat,"Prop für Operand[0] erwartet")  }
+            } else etop = Error(idat,eoppropasop0exp)  }
         efun = xnil  }
 
     fun fee() {
@@ -1075,10 +1143,10 @@ class VirtualMachine {
         if (etop !is Error) {
             when (efun) {
                 is Double -> {  if (etop is Double) etop = (efun as Double) + (etop as Double)
-                                else etop = Error(idadd,"Real als Operand[1] erwartet")  }
+                                else etop = Error(idadd,eoprealasop1exp)  }
                 is Long   -> {  if (etop is Long) etop = (efun as Long) + (etop as Long)
-                                else etop = Error(idadd,"Integer als Operand[1] erwartet")  }
-                else      -> etop = Error(idadd,"Zahl als Operand[0] erwartet")
+                                else etop = Error(idadd,eopintasop1exp)  }
+                else      -> etop = Error(idadd,eopnumasop0exp)
             } }
         efun = xnil  }
 
@@ -1087,10 +1155,10 @@ class VirtualMachine {
         if (etop !is Error) {
             when (efun) {
                 is Double -> {  if (etop is Double) etop = (efun as Double) - (etop as Double)
-                                else etop = Error(idsub,"Real als Operand[1] erwartet")  }
+                                else etop = Error(idsub,eoprealasop1exp)  }
                 is Long   -> {  if (etop is Long) etop = (efun as Long) - (etop as Long)
-                                else etop = Error(idsub,"Integer als Operand[1] erwartet")  }
-                else      -> etop = Error(idsub,"Zahl als Operand[0] erwartet")
+                                else etop = Error(idsub,eopintasop1exp)  }
+                else      -> etop = Error(idsub,eopnumasop0exp)
             } }
         efun = xnil  }
 
@@ -1099,10 +1167,10 @@ class VirtualMachine {
         if (etop !is Error) {
             when (efun) {
                 is Double -> {  if (etop is Double) etop = (efun as Double) * (etop as Double)
-                                else etop = Error(idmul,"Real als Operand[1] erwartet")  }
+                                else etop = Error(idmul,eoprealasop1exp)  }
                 is Long   -> {  if (etop is Long) etop = (efun as Long) * (etop as Long)
-                                else etop = Error(idmul,"Integer als Operand[1] erwartet")  }
-                else      -> etop = Error(idmul,"Zahl als Operand[0] erwartet")
+                                else etop = Error(idmul,eopintasop1exp)  }
+                else      -> etop = Error(idmul,eopnumasop0exp)
             } }
         efun = xnil  }
 
@@ -1115,16 +1183,16 @@ class VirtualMachine {
             when (efun) {
                 is Double -> x = efun as Double
                 is Long   -> x = (efun as Long).toDouble()
-                else      -> z = Error(iddiv,"Zahl als Operand[0] erwartet")
+                else      -> z = Error(iddiv,eopnumasop0exp)
             }
             when (etop) {
                 is Double -> y = etop as Double
                 is Long   -> y = (etop as Long).toDouble()
-                else      -> z = Error(iddiv,"Zahl als Operand[1] erwartet")
+                else      -> z = Error(iddiv,eopnumasop1exp)
             }
             if (z is Error) etop = z
             else try {  if (y != 0.0) etop = x/y
-                        else etop = Error(iddiv,"Division durch Null")  }  // Infinity?
+                        else etop = Error(iddiv,eopdivbyzero)  }  // Infinity?
                  catch (e: Exception) {  etop = Error(iddiv,e.message as String)  }
         }
         efun = xnil  }
@@ -1135,11 +1203,11 @@ class VirtualMachine {
             when (efun) {
                 is Double -> {  if (etop is Double)
                                     etop = Math.pow((efun as Double),(etop as Double))
-                                else etop = Error(idpow,"Real als Operand[1] erwartet")  }
+                                else etop = Error(idpow,eoprealasop1exp)  }
                 is Long   -> {  if (etop is Long)
                                     etop = Math.pow(((efun as Long).toDouble()),((etop as Long).toDouble())).toLong()
-                                else etop = Error(idpow,"Integer als Operand[1] erwartet")  }
-                else      -> etop = Error(idpow,"Zahl als Operand[0] erwartet")
+                                else etop = Error(idpow,eopintasop1exp)  }
+                else      -> etop = Error(idpow,eopnumasop0exp)
             } }
         efun = xnil  }
 
@@ -1148,8 +1216,8 @@ class VirtualMachine {
         if (etop !is Error) {
             if (efun is Long) {
                 if (etop is Long) etop = (efun as Long).div(etop as Long)
-                else etop = Error(ididiv,"Integer als Operand[1] erwartet")
-            } else etop = Error(ididiv,"Integer als Operand[0] erwartet")
+                else etop = Error(ididiv,eopintasop1exp)
+            } else etop = Error(ididiv,eopintasop0exp)
         }
         efun = xnil  }
 
@@ -1158,8 +1226,8 @@ class VirtualMachine {
         if (etop !is Error) {
             if (efun is Long) {
                 if (etop is Long) etop = (efun as Long).mod(etop as Long)
-                else etop = Error(idimod,"Integer als Operand[1] erwartet")
-            } else etop = Error(idimod,"Integer als Operand[0] erwartet")
+                else etop = Error(idimod,eopintasop1exp)
+            } else etop = Error(idimod,eopintasop0exp)
         }
         efun = xnil  }
 
@@ -1194,7 +1262,7 @@ class VirtualMachine {
             is Double -> etop = Math.abs(etop as Double)
             is Long   -> etop = Math.abs(etop as Long)
             is Error  -> { }
-            else      -> etop = Error(idabs,efnnumexp) // efnnumexp
+            else      -> etop = Error(idabs,efnnumexp)
         } }
 
     fun fneg() {
@@ -1265,9 +1333,9 @@ class VirtualMachine {
                 when (etop) {
                     is Double -> etop = (efun as Double).roundTo(Math.round(etop as Double).toInt())
                     is Long   -> etop = (efun as Double).roundTo((etop as Long).toInt())
-                    else      -> etop = Error(idroundto, "Zahl als Operand[1] erwartet")
+                    else      -> etop = Error(idroundto, eopnumasop1exp)
                 }  }
-            else etop = Error(idroundto,"Real als Operand[0] erwartet")
+            else etop = Error(idroundto,eoprealasop0exp)
         }
         efun = xnil  }
 
@@ -1388,12 +1456,12 @@ class VirtualMachine {
             when (efun) {
                 is Double -> y = efun as Double
                 is Long   -> y = (efun as Long).toDouble()
-                else      -> z = Error(idarctan2,"Zahl als Operand[0] erwartet")
+                else      -> z = Error(idarctan2,eopnumasop0exp)
             }
             when (etop) {
                 is Double -> x = etop as Double
                 is Long   -> x = (etop as Long).toDouble()
-                else      -> z = Error(idarctan2,"Zahl als Operand[1] erwartet")
+                else      -> z = Error(idarctan2,eopnumasop1exp)
             }
             if (z is Error) etop = z
             else etop = Math.atan2(y,x)  }
@@ -1468,13 +1536,13 @@ class VirtualMachine {
     fun isLess(a: Any,b: Any,eid: Ident): Any {
         when (b) {
             is Double  -> {  if (a is Double) return (a < b)
-                             else return Error(eid,"Typen nicht vergleichbar")  }
+                             else return Error(eid,eoptypenocompare)  }
             is Long    -> {  if (a is Long) return (a < b)
-                             else return Error(eid,"Typen nicht vergleichbar")  }
+                             else return Error(eid,eoptypenocompare)  }
             is Ident   -> {  if (a is Ident) return (a.pname < b.pname)
-                             else return Error(eid,"Typen nicht vergleichbar")  }
+                             else return Error(eid,eoptypenocompare)  }
             is String  -> {  if (a is String) return (a < b)
-                             else return Error(eid,"Typen nicht vergleichbar")  }
+                             else return Error(eid,eoptypenocompare)  }
             //  is Boolean -> {}
             //  is Nil     -> {}
             //  is Cell    -> {}
@@ -1484,7 +1552,7 @@ class VirtualMachine {
             //  is Combine -> {}
             //  is Act     -> {}
             //  is Error   -> {}
-            else       -> return Error(eid,"Typen nicht vergleichbar")
+            else       -> return Error(eid,eoptypenocompare)
         } }
 
     fun feq() {
@@ -1532,7 +1600,7 @@ class VirtualMachine {
                 true     -> etop = efun
                 false    -> { }  // etop = etop
                 is Error -> etop = z
-                else     -> etop = Error(idmin,"unbekannter Fehler")
+                else     -> etop = Error(idmin,eopunknownerr)
             }  }
         efun = xnil  }
 
@@ -1544,7 +1612,7 @@ class VirtualMachine {
                 true     -> { }  // etop = etop
                 false    -> etop = efun
                 is Error -> etop = z
-                else     -> etop = Error(idmax,"unbekannter Fehler")
+                else     -> etop = Error(idmax,eopunknownerr)
             }  }
         efun = xnil  }
 
@@ -1553,7 +1621,7 @@ class VirtualMachine {
             true     -> etop = false
             false    -> etop = true
             is Error -> { }
-            else     -> etop = Error(idnot,"Bool als Typ erwartet")
+            else     -> etop = Error(idnot,efnboolexp)
         } }
 
     fun fand() {
@@ -1562,28 +1630,28 @@ class VirtualMachine {
             true     -> {  when (efun) {
                                true  -> etop = true
                                false -> etop = false
-                               else  -> etop = Error(idand,"Bool als Operand[0] erwartet")
+                               else  -> etop = Error(idand,eopboolasop0exp)
                         } }
             false    -> {  if (efun is Boolean) etop = false
-                           else etop = Error(idand,"Bool als Operand[0] erwartet")
+                           else etop = Error(idand,eopboolasop0exp)
                         }
             is Error -> { }
-            else     -> etop = Error(idand,"Bool als Operand[1] erwartet")  }
+            else     -> etop = Error(idand,eopboolasop1exp)  }
         efun = xnil  }
 
     fun f_or() {
         ee(idor)
         when (etop) {
             true     -> {  if (efun is Boolean) etop = true
-                           else etop = Error(idor,"Bool als Operand[0] erwartet")
+                           else etop = Error(idor,eopboolasop0exp)
                         }
             false    -> {  when (efun) {
                                true  -> etop = true
                                false -> etop = false
-                               else  -> etop = Error(idor,"Bool als Operand[0] erwartet")
+                               else  -> etop = Error(idor,eopboolasop0exp)
                         } }
             is Error -> { }
-            else     -> etop = Error(idor,"Bool als Operand[1] erwartet")  }
+            else     -> etop = Error(idor,eopboolasop1exp)  }
         efun = xnil  }
 
     fun fxor() {
@@ -1592,15 +1660,15 @@ class VirtualMachine {
             true     -> {  when (efun) {
                                true  -> etop = false
                                false -> etop = true
-                               else  -> etop = Error(idxor,"Bool als Operand[0] erwartet")
+                               else  -> etop = Error(idxor,eopboolasop0exp)
                         } }
             false    -> {  when (efun) {
                                true  -> etop = true
                                false -> etop = false
-                               else  -> etop = Error(idxor,"Bool als Operand[0] erwartet")
+                               else  -> etop = Error(idxor,eopboolasop0exp)
                         } }
             is Error -> { }
-            else     -> etop = Error(idxor,"Bool als Operand[1] erwartet")  }
+            else     -> etop = Error(idxor,eopboolasop1exp)  }
         efun = xnil  }
 
     fun fisAtom() {
@@ -1685,7 +1753,7 @@ class VirtualMachine {
         when (etop) {
             is Ident -> etop = ((etop as Ident).value != xreserve)
             is Error -> { }
-            else     -> etop = Error(idisbound,"Ident als Typ erwartet")
+            else     -> etop = Error(idisbound,efnidentexp)
         } }
 
     fun fisundef()  {  if (etop !is Error) etop = (etop == xundef)  }
@@ -1694,14 +1762,14 @@ class VirtualMachine {
         when (etop) {
             is Combine -> etop = (etop as Combine).term
             is Error   -> { }
-            else       -> etop = Error(idcons,efnnocombine)  // ?
+            else       -> etop = Error(idcons,efnnocombine)
         } }
 
     fun fname() {
         when (etop) {
             is Ident -> etop = (etop as Ident).pname
             is Error -> { }
-            else     -> etop = Error(idname,efnidentexp) // ??? //efnidentexp
+            else     -> etop = Error(idname,efnidentexp) // ???
         } }
 
     fun fbody() {
@@ -1728,7 +1796,7 @@ class VirtualMachine {
         ee(iderror)
         if (etop !is Error) {
             if (efun is Ident) etop = Error(efun,etop)
-            else etop = Error(iderror,"Ident Typ für Operand[0] erwartet")
+            else etop = Error(iderror,eopidentasop0exp)
         }
         efun = xnil  }
 
@@ -1742,8 +1810,8 @@ class VirtualMachine {
         if (etop !is Error) {
             if ((etop is Cell) or (etop is Nil)) {
                 if ((efun is Long) or (efun is Act)) etop = Act(efun,etop,idit)
-                else etop = Error(idact,"Integer oder Act als Operand[0] erwartet")
-            } else etop = Error(idact,"Dict als Operand[1] erwartet")  }
+                else etop = Error(idact,eopintoractasop0exp)
+            } else etop = Error(idact,eopdictasop1exp)  }
         efun = xnil  }
 
     fun fbind() {
@@ -1751,7 +1819,7 @@ class VirtualMachine {
         if (etop !is Error) {
             if (efun is Act) {
                 etop = Act((efun as Act).num,(efun as Act).data,etop)
-            } else etop = Error(idbind,"Act für Operand[0] erwartet")  }
+            } else etop = Error(idbind,eopactasop0exp)  }
         efun = xnil  }
 
     // bind (ee, mit Kopie von Act)
@@ -1801,7 +1869,7 @@ class VirtualMachine {
                                         while (i >= k) {  etop = Cell(k.toDouble(),xcons,etop)
                                                           k = k + 1  }
                                     }
-                                } else etop = Error(idto,"Real für Operand[1] erwartet")  }
+                                } else etop = Error(idto,eoprealasop1exp)  }
                 is Long   -> {  if (etop is Long) {
                                     i = efun as Long
                                     k = etop as Long
@@ -1813,8 +1881,8 @@ class VirtualMachine {
                                         while (i >= k) {  etop = Cell(k,xcons,etop)
                                                           k = k + 1  }
                                     }
-                                } else etop = Error(idto,"Integer für Opernad[1] erwartet")  }
-                else      -> etop = Error(idto,"Zahl als Operand[0] erwartet")
+                                } else etop = Error(idto,eopintasop1exp)  }
+                else      -> etop = Error(idto,eopnumasop0exp)
             } }
         efun = xnil  }
 
@@ -1824,7 +1892,7 @@ class VirtualMachine {
             is Nil    -> { }
             is String -> etop = (etop as String).reversed()
             is Error  -> { }
-            else      -> etop = Error(idreverse,"Cell, Null oder String als Typ erwartet")
+            else      -> etop = Error(idreverse,efnpropnullstringexp)
         } }
 
     fun fmake() {
@@ -1834,7 +1902,7 @@ class VirtualMachine {
             is Double -> n = Math.round(etop as Double).toInt()
             is Long   -> n = (etop as Long).toInt()
             is Error  -> { }
-            else      -> etop = Error(idmake,"Zahl als Operand[1] erwartet")
+            else      -> etop = Error(idmake,eopnumasop1exp)
         }
         if (etop !is Error) {
             var res: Any = Nil()
@@ -1851,7 +1919,7 @@ class VirtualMachine {
             is Double -> i = Math.round(etop as Double)
             is Long   -> i = etop as Long
             is Error  -> { }
-            else      -> etop = Error(idtake,"Zahl als Operand[1] erwartet")
+            else      -> etop = Error(idtake,eopnumasop1exp)
         }
         if (etop !is Error) {
             when (efun) {
@@ -1863,7 +1931,7 @@ class VirtualMachine {
                                 etop = nreverse(etop)  }
                 is Nil    -> etop = efun
               //is String -> {}
-                else      -> etop = Error(idtake,"Table oder Liste als Operand[0] erwartet")
+                else      -> etop = Error(idtake,eoptableorlistasop0exp)
             } }
         efun = xnil  }
 
@@ -1874,7 +1942,7 @@ class VirtualMachine {
             is Double -> i = Math.round(etop as Double)
             is Long   -> i = etop as Long
             is Error  -> { }
-            else      -> etop = Error(idtake,"Zahl als Operand[1] erwartet")
+            else      -> etop = Error(idtake,eopnumasop1exp)
         }
         if (etop !is Error) {
             when (efun) {
@@ -1885,7 +1953,7 @@ class VirtualMachine {
                                 else etop = efun  }
                 is Nil    -> etop = efun
               //is String -> {}
-                else      -> etop = Error(iddrop,"Table oder Liste als Operand[0] erwartet")
+                else      -> etop = Error(iddrop,eoptableorlistasop0exp)
             } }
         efun = xnil  }
     
@@ -1900,7 +1968,7 @@ class VirtualMachine {
                                 if (efun is Error) etop = efun  }
                 is Nil    -> {  }
               //is String -> {}
-                else      -> etop = Error(idpplus,"Table oder Liste als Operand[0] erwartet")
+                else      -> etop = Error(idpplus,eoptableorlistasop0exp)
             } }
         efun = xnil  }
 
@@ -1920,7 +1988,7 @@ class VirtualMachine {
                     if (p is Cell) a = p.head
                     else return xundef
                  } }
-        return Error(eid,"Table für Ident-Get erwartet")  }
+        return Error(eid,efntableforidentgetexp)  }
 
     /*
                                 {  val i: Ident = etop
@@ -1938,9 +2006,9 @@ class VirtualMachine {
                 when (efun) {
                     is Cell  -> etop = iget(idiget,efun,etop as Ident)
                     is Nil   -> etop = xundef
-                    else     -> etop = Error(idiget,"Cell oder Null als Operand[0] erwartet")
+                    else     -> etop = Error(idiget,eoppropornullasop0exp)
                 } }
-            else etop = Error(idiget,"Ident als Operand[1] erwartet")
+            else etop = Error(idiget,eopidentasop1exp)
         }
         efun = xnil  }
 
@@ -1963,11 +2031,11 @@ class VirtualMachine {
     fun fiput() {
         ee(idiput)
         if (etop !is Error) {
-            if (etop !is Cell) etop = Error(idiput,"Liste für Operand[1] erwartet")
-            else if ((etop as Cell).head !is Ident) etop = Error(idiput,"Ident für [0]°Operand[1] erwartet")
+            if (etop !is Cell) etop = Error(idiput,eoplistasop1exp)
+            else if ((etop as Cell).head !is Ident) etop = Error(idiput,eopidentasfstofop1exp)
             else {  val i: Ident = (etop as Cell).head as Ident
                     etop = (etop as Cell).tail
-                    if (etop !is Cell) etop = Error(idiput,"Liste mit 2 Elementen für Operand[1] erwartet")
+                    if (etop !is Cell) etop = Error(idiput,eoplist2asop1exp)
                     else {  val v: Any = (etop as Cell).head
                             etop = iput(efun,i,v)
                          }  }  }
@@ -1989,7 +2057,7 @@ class VirtualMachine {
                 if (p is Cell) a = p.head
                 else return xundef
             } }
-        return Error(eid,"Table für Get erwartet")  }
+        return Error(eid,efntableforgetexp)  }
 
     fun fget() {
         ee(idget)
@@ -1997,7 +2065,7 @@ class VirtualMachine {
             when (efun) {
                 is Cell -> etop = get(idget,efun,etop)
                 is Nil  -> etop = xundef
-                else    -> etop = Error(idget,"Cell oder Null als Operand[0] erwartet")
+                else    -> etop = Error(idget,eoppropornullasop0exp)
             } }
         efun = xnil  }
 
@@ -2020,10 +2088,10 @@ class VirtualMachine {
     fun fput() {
         ee(idput)
         if (etop !is Error) {
-            if (etop !is Cell) etop = Error(idput,"Liste für Operand[1] erwartet")
+            if (etop !is Cell) etop = Error(idput,eoplistasop1exp)
             else {  val i: Any = (etop as Cell).head
                     etop = (etop as Cell).tail
-                    if (etop !is Cell) etop = Error(idput,"Liste mit 2 Elementen für Operand[1] erwartet")
+                    if (etop !is Cell) etop = Error(idput,eoplist2asop1exp)
                     else {  val v: Any = (etop as Cell).head
                             etop = put(efun,i,v)
                          }  }  }
@@ -2038,7 +2106,7 @@ class VirtualMachine {
                            if (etop !is Error) etop = nreverse(list)  }
             is Nil   -> { }
             is Error -> { }
-            else     -> etop = Error(idkeys,"Table als Argument erwartet")
+            else     -> etop = Error(idkeys,efndictexp)
         }  }
 
     fun fvalues() {
@@ -2050,7 +2118,7 @@ class VirtualMachine {
                            if (etop !is Error) etop = nreverse(list)  }
             is Nil   -> { }
             is Error -> { }
-            else     -> etop = Error(idvalues,"Table als Argument erwartet")
+            else     -> etop = Error(idvalues,efndictexp)
         }  }
 
     fun fit() {
@@ -2058,7 +2126,7 @@ class VirtualMachine {
             is Cell  -> etop = iget(idit,etop,xit)
             is Nil   -> etop = xundef
             is Error -> { }
-            else     -> etop = Error(idit,"Dict als Argument erwartet")
+            else     -> etop = Error(idit,efndictexp)
         }  }
 
     fun fcount() {
@@ -2072,7 +2140,7 @@ class VirtualMachine {
                               if (efun is Error) etop = efun
                               else etop = c.toDouble()  }
                 is Nil  -> etop = 0.toDouble()
-                else    -> etop = Error(idcount,"Liste als Operand[0] erwartet")
+                else    -> etop = Error(idcount,eoplistasop0exp)
             }  }
         efun = xnil  }
 
@@ -2090,7 +2158,7 @@ class VirtualMachine {
                               else if (efun is Error) etop = efun
                               else etop = -1.toDouble()  }
                 is Nil  -> etop = -1.toDouble()
-                else    -> etop = Error(idfind,"Liste als Operand[0] erwartet")
+                else    -> etop = Error(idfind,eoplistasop0exp)
             }  }
         efun = xnil  }
 
@@ -2104,7 +2172,7 @@ class VirtualMachine {
                            if (etop !is Error) etop = found  }
             is Nil   -> etop = false
             is Error -> { }
-            else     -> etop = Error(idin,"Liste als Operand[1] erwartet")
+            else     -> etop = Error(idin,eoplistasop1exp)
         }
         efun = xnil  }
 
@@ -2118,7 +2186,7 @@ class VirtualMachine {
             is Nil    -> etop = 0.toDouble()
             is String -> etop = (etop as String).length.toDouble()
             is Error  -> { }
-            else      -> etop = Error(idlength,"Cell, Null oder String erwartet")
+            else      -> etop = Error(idlength,efnpropnullstringexp) // Prop?
         } }
 
     fun list3ToCell(eid: Ident, p: Any): Any {
@@ -2157,14 +2225,14 @@ class VirtualMachine {
                     is Double -> i = Math.round(c.infix as Double).toInt()
                     is Long   -> i = (c.infix as Long).toInt()
                     is Error  -> z = c.infix
-                    else      -> z = Error(idsubstring,"Zahl für Argument[1] erwartet")
+                    else      -> z = Error(idsubstring,efnnumasarg1exp)
                 }
                 if (z !is Error) {
                     when (c.tail) {
                         is Double -> k = Math.round(c.tail as Double).toInt()
                         is Long   -> k = (c.tail as Long).toInt()
                         is Error  -> z = c.tail
-                        else      -> z = Error(idsubstring,"Zahl für Argument[2] erwartet")
+                        else      -> z = Error(idsubstring,efnnumasarg2exp)
                     }
                     if (z !is Error) {
                         if (i < 1) i = 1
@@ -2174,17 +2242,17 @@ class VirtualMachine {
                         etop = s.substring(i-1,i+k-1)
                     } else etop = z
                 } else etop = z
-            } else etop = Error(idsubstring,"String für Argument[0] erwartet")
+            } else etop = Error(idsubstring,efnstringasarg0exp)
         } else if (c is Error) etop = c
-        else etop = Error(idsubstring,"unbekannter Fehler")  }
+        else etop = Error(idsubstring,efnunknownerr)  }
 
     fun fconcat() {
         ee(idconcat)
         if (etop !is Error) {
             if (efun is String) {
                 if (etop is String) etop = (efun as String) + etop
-                else etop = Error(idconcat,"String als Operand[1] erwartet")
-            } else etop = Error(idconcat,"String als Operand[0] erwartet")
+                else etop = Error(idconcat,eopstringasop1exp)
+            } else etop = Error(idconcat,eopstringasop0exp)
         }
         efun = xnil  }
 
@@ -2194,8 +2262,8 @@ class VirtualMachine {
             if (efun is String) {
                 if (etop is String)
                     etop = ((efun as String).indexOf((etop as String),0)+1).toDouble()
-                else etop = Error(idindexof,"String als Operand[1] erwartet")
-            } else etop = Error(idindexof,"String als Opernad[0] erwartet")  }
+                else etop = Error(idindexof,eopstringasop1exp)
+            } else etop = Error(idindexof,eopstringasop0exp)  }
         efun = xnil  }
 
     fun ftrim() {
@@ -2291,7 +2359,7 @@ class VirtualMachine {
                                 n = n - 1
                             }  }
             is Error  -> { }
-            else      -> etop = Error(idunpack,"String als Argument erwartet")
+            else      -> etop = Error(idunpack,efnstringexp)
         }  }
 
     // at
@@ -2317,8 +2385,8 @@ class VirtualMachine {
         if (etop !is Error) {
             if (efun is String) {
                 if (etop is String) etop = splitTo(efun as String,etop as String)
-                else etop = Error(idsplit,"String für Operand[1] erwartet")
-            } else etop = Error(idsplit,"String für Operand[0] erwartet")
+                else etop = Error(idsplit,eopstringasop1exp)
+            } else etop = Error(idsplit,eopstringasop0exp)
         }
         efun = xnil  }
 
@@ -2339,9 +2407,9 @@ class VirtualMachine {
                                   } while (efun is Cell)
                                   etop = s  }  // ??? if is Error?
                     is Nil  -> etop = ""
-                    else    -> etop = Error(idjoin,"Liste als Operand[0] erwartet")
+                    else    -> etop = Error(idjoin,eoplistasop0exp)
                 }
-            } else etop = Error(idjoin,"String als Operand[1] erwartet")
+            } else etop = Error(idjoin,eopstringasop1exp)
         }
         efun = xnil  }
 
@@ -2378,7 +2446,7 @@ class VirtualMachine {
         etop = s }
 
     fun fhelp() {
-        etop = "https://github.com/pointfrip/calculator/blob/main/quickinfo.pdf"
+        etop = "https://github.com/pointfrip/calculator/blob/main/quickinfo-en.pdf"
     }
 
     fun deflines(lines: Any): Any {
@@ -2403,7 +2471,7 @@ class VirtualMachine {
                             ln = "\n"
                         }
                     }
-                } else return Error(idipr,"Liste mit Strings erwartet")
+                } else return Error(idipr,efnlistofstringsexp)
             }
             return res
         } catch(e: Exception) {  return Error(idipr,e.message as String)  }
