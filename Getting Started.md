@@ -18,7 +18,7 @@ A [Quickinfo.pdf](https://github.com/pointfrip/calculator/blob/main/quickinfo-en
 
 As for technologies, I used Kotlin IDE Community as the implementation language and Android Studio (Kotlin) for the app/APK.
 
-## I will give a few examples of pointfree interpreter technology
+### I will give a few examples of pointfree interpreter technology
 
 With **name == function term** a function term is given a name, e.g.:
 
