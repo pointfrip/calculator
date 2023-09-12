@@ -9,7 +9,8 @@ The screenshot looks like this:
 
 Each input line is executed with CALC and the result is then displayed below the button line. \
 The other buttons are behind CALC - Composition - Round brackets - Square brackets - Step left - Step right \
-In the menu there are also the items <Clear> to reset to the initialization state. <Insert result above> - <Load External> - <Copy Input>
+In the menu there are also the items <Clear> to reset to the initialization state, \
+Insert result above - Load External - Copy Input
 
 The Pointfree language has an unusual syntax and is typically processed right-to-left. \
 It's practically all infix notation with functions or brackets in between. \
