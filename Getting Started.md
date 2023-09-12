@@ -1,6 +1,6 @@
 Hello,
 
-I created an app for a Pointfree interpreter in Kotlin. \
+I created an app for a Pointfree Interpreter in Kotlin. \
 It should be able to be operated like a calculator with functional programming options via the keyboard.
 
 The screenshot looks like this:
