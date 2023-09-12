@@ -19,7 +19,7 @@ A [Quickinfo.pdf](https://github.com/pointfrip/calculator/blob/main/quickinfo-en
 As for technologies, I used Kotlin IDE Community as the implementation language and Android Studio (Kotlin) for the app/APK.
 
 
-
+#
 ### I will give a few examples of pointfree interpreter technology
 
 With **name == function term** a function term is given a name, e.g.:
@@ -46,6 +46,7 @@ id is the identity function.
     -->  385
 
 With the sum of squares we have now programmed a nice pipeline.
+#
 
 Download options are available via [heise download](https://www.heise.de/download/product/fp-trivia) in the Android department. (Virus checked by heise) \
 Or via [Github](https://github.com/pointfrip/calculator/blob/main/apk/debug/app-debug.apk) (APK), the source code for the app is also on Github: [pointfrip/calculator/src](https://github.com/pointfrip/calculator/tree/main/src)
