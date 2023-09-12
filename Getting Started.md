@@ -26,7 +26,7 @@ With **name == function term** a function term is given a name, e.g.:
     -->  "sum == (+ \) _s"
 
 and with the CALC button the calculator accepts the definition and displays the compilation as a string. \
-**new line**
+New Line:
 
     iota ° 10
     -->  (1 ; 2 ; 3 ; 4 ; 5 ; 6 ; 7 ; 8 ; 9 ; 10 ;)
