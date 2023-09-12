@@ -12,7 +12,7 @@ The other buttons are behind **CALC** - **Composition** - **Round brackets** - *
 In the menu there are also the items **Clear** to reset to the initialization state, \
 **Insert result above** - **Load External** - **Copy Input**
 
-The Pointfree language has an unusual syntax and is typically processed **right-to-left**. \
+The pointfree language has an unusual syntax and is typically processed **right-to-left**. \
 It's practically all **infix notation** with functions or brackets in between. \
 A [Quickinfo.pdf](https://github.com/pointfrip/calculator/blob/main/quickinfo-en.pdf) roughly shows the data types and functions/operators of the language.
 
