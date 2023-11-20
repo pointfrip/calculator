@@ -1,8 +1,5 @@
 package org.hcmeynert.pointfrip
 
-// import java.math.BigDecimal
-// import java.math.RoundingMode
-
 public var runvm: Boolean = false
 
 // ----- constants
@@ -339,7 +336,7 @@ class VirtualMachine {
     var xact: Ident = identlistPut("_act",xreserve)
     var xbool: Ident = identlistPut("_bool",xreserve)
     var xmark: Ident = Ident("_mark",Nil())  // besser nicht in identlist
-    var iddef: Ident = identlistPut(ctdef,idid) // xreserve)
+    var iddef: Ident = identlistPut(ctdef,Nil())
     var xddot: Ident = Ident(ctddot,Nil())       // besser nicht in identlist
     var idipr: Ident = Ident("interpreter",Nil()) // ?
     var xsingle: Ident = identlistPut("_s",Nil())
@@ -2572,16 +2569,7 @@ class VirtualMachine {
                 "files=='[3] act id\n" +
                 "loadtext=='[4] act arg iput '_it ee (head°term) app arg\n" +
                 "savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (tail°term) app arg\n" +
-                "pim==reverse°[2]°(([0]>1)->*(iszero°[0]-[1]*floor°[0]/[1])->(([0]/[1]),[1],([1],[2]),);([0],([1]+1),[2],))°id,2,(),\n" +
-                "r==((isneg°[1])->'_undef;(round°[1]) app [0])°arg ee (pred°length°arg)-float°head°term\n" +
-                "tailr==id take pred°length\n" +
-                "last==isatom->'_undef;(round°pred°length) app id\n" +
-                "rotl==isatom->();tail++prop°head,infix,(),\n" +
-                "rotr==isatom->();(drop ++ take)°id ee pred°length\n" +
-                "times==[2]°((ispos°[1])->*[0],(pred°[1]),([0] app [2]),)°([0],[1])°ee\n" +
-                "foldl==(not°isprop°[2]) -> [1] ; foldl ° [0],([0] app [1] ee head°[2]),(tail°[2]),\n" +
-                "foldr==foldl ° ([0] comp '([1] ee [0])),[1],(reverse°[2]),\n" +
-                "== == '== error \"Cannot define: \" & string°term"
+                "pim == reverse°[2]°(([0]>1)->*(iszero°[0]-[1]*floor°[0]/[1])->(([0]/[1]),[1],([1],[2]),);([0],([1]+1),[2],))°id,2,(),"
     }
 
 }  // end of class VirtualMachine
@@ -2598,8 +2586,7 @@ fun main() {      //   help:()     new ?      help:name    save:datei1.txt     l
     //println(vm.toValue(vm.calc("try == id")))
     //println(vm.toValue(vm.calc("lood == '[1] act arg iput '_it ee (head°term) app arg")))
     //println(vm.toValue(vm.calc("savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (head°term) app arg\n")))
-    println(vm.toValue(vm.calc("45==46,47,48,")))
-    println(vm.toValue(vm.calc("foldr ° '-,100,(iota°10),")))
+    println(vm.toValue(vm.calc("sin∘rad∘45")))
     //println("hallo.txt".substringAfterLast("/"))
     //"last==(isprop°'true)->*[0]°tail°[1]'()") // hier bei comment _s ?
     //val abc: Any = idreserve
@@ -2610,13 +2597,4 @@ fun main() {      //   help:()     new ?      help:name    save:datei1.txt     l
 //    println("identlist == ${vm.toValue(vm.identlist)}")
     //println("unicode(;) = ${';'.code}")
     //println("Kommentar == ${toValue(Comment(fisList(Cell("A",xcons,Nil()))))}")
-    //var x = BigDecimal("3.0000000000000000000000")
-    //var y = BigDecimal("-7.0000000000000000000000")
-    //x = x.div(y) //,1000,RoundingMode.HALF_UP)
-    //var i = x.compareTo(BigDecimal("0"))
-    //var stringa = x as String
-    //var bd = stringa as BigDecimal
-    //stringa.min()
-    //bd.min()
-    //println("Big: x = " + x + " " + y + " i=" + i.toString())
 }
