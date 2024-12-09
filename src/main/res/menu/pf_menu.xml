@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
  xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/clear"
-          android:title="@string/clear"
-          app:showAsAction="never"/>
-
     <item android:id="@+id/result"
         android:title="@string/result"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/clear"
+        android:title="Clear Input"
         app:showAsAction="never"/>
 
     <item android:id="@+id/load"

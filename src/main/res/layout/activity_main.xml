@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
@@ -14,20 +14,23 @@ tools:context=".MainActivity">
     tools:layout_editor_absoluteX="67dp"
     tools:layout_editor_absoluteY="27dp">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight=".30">
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/editTextInText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:ems="10"
             android:text=""
             app:layout_constraintBottom_toTopOf="@+id/button"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:autofillHints=""
+            android:inputType=""
+            tools:ignore="LabelFor,TextFields" />
 
     </ScrollView>
 
@@ -40,105 +43,109 @@ tools:context=".MainActivity">
         <Button
             android:id="@+id/button"
             android:layout_width="90dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:text="CALC"
+            android:layout_height="37dp"
+            android:layout_marginStart="3dp"
+            android:text="@string/calc"
+            android:textColor="#FFFFFF"
             android:textAllCaps="false"
             android:backgroundTint="#535353"
-            app:strokeColor="#000000"
-            app:strokeWidth="1dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName2"
+            android:background="@drawable/border_button"
+
+            app:layout_constraintBottom_toTopOf="@+id/editTextOutText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextInText" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:text="°"
+            android:layout_marginStart="2dp"
+            android:text="@string/comp"
+            android:textColor="#FFFFFF"
             android:textAllCaps="false"
             android:backgroundTint="#535353"
-            app:strokeColor="#000000"
-            app:strokeWidth="1dp"
-            app:layout_constraintLeft_toRightOf="@+id/button"/>
+            android:background="@drawable/border_button"
+            app:layout_constraintLeft_toRightOf="@+id/button" />
 
         <Button
             android:id="@+id/button3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:text="()"
+            android:layout_marginStart="2dp"
+            android:text="@string/pars"
+            android:textColor="#FFFFFF"
             android:textAllCaps="false"
             android:backgroundTint="#535353"
-            app:strokeColor="#000000"
-            app:strokeWidth="1dp"
-            app:layout_constraintLeft_toRightOf="@+id/button2"/>
+            android:background="@drawable/border_button"
+            app:layout_constraintLeft_toRightOf="@+id/button2" />
 
         <Button
             android:id="@+id/button4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:text="[]"
+            android:layout_marginStart="2dp"
+            android:text="@string/brks"
+            android:textColor="#FFFFFF"
             android:textAllCaps="false"
             android:backgroundTint="#535353"
-            app:strokeColor="#000000"
-            app:strokeWidth="1dp"
-            app:layout_constraintLeft_toRightOf="@+id/button3"/>
+            android:background="@drawable/border_button"
+            app:layout_constraintLeft_toRightOf="@+id/button3" />
 
         <Button
             android:id="@+id/button6"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:text="←"
+            android:layout_marginStart="2dp"
+            android:text="@string/left"
+            android:textColor="#FFFFFF"
             android:textAllCaps="false"
             android:backgroundTint="#535353"
-            app:strokeColor="#000000"
-            app:strokeWidth="1dp"
-            app:layout_constraintLeft_toRightOf="@+id/button4"/>
+            android:background="@drawable/border_button"
+            app:layout_constraintLeft_toRightOf="@+id/button4" />
 
         <Button
             android:id="@+id/button7"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="3dp"
-            android:text="→"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="3dp"
+            android:text="@string/right"
+            android:textColor="#FFFFFF"
             android:textAllCaps="false"
             android:backgroundTint="#535353"
-            app:strokeColor="#000000"
-            app:strokeWidth="1dp"
-            app:layout_constraintLeft_toRightOf="@+id/button6"/>
+            android:background="@drawable/border_button"
+            app:layout_constraintLeft_toRightOf="@+id/button6" />
 
     </LinearLayout>
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight=".30">
 
         <EditText
-            android:id="@+id/editTextTextPersonName2"
+            android:id="@+id/editTextOutText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:ems="10"
             android:text=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button" />
+            app:layout_constraintTop_toBottomOf="@+id/button"
+            android:autofillHints=""
+            android:inputType=""
+            tools:ignore="LabelFor,TextFields" />
 
     </ScrollView>
 
 </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

@@ -4,4 +4,10 @@
     <string name="result">△ Result</string>
     <string name="load">Load External</string>
     <string name="copy">Copy Input</string>
+    <string name="calc">CALC</string>
+    <string name="comp">°</string>
+    <string name="pars">( )</string>
+    <string name="brks">[ ]</string>
+    <string name="left">←</string>
+    <string name="right">→</string>
 </resources>
