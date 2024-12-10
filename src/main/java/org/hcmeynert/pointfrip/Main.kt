@@ -318,7 +318,7 @@ class VirtualMachine {
     var idstopvm: Ident = newidentfunc("stopvm",::fstopvm)
     var iddump: Ident = newidentfunc("dump",::fdump)
     var idsavedump: Ident = newidentfunc("savedump",::fsavedump) // for test
-    var idhelp: Ident = newidentfunc("help",::fhelp)
+    var idhelpinfo: Ident = newidentfunc("helpinfo",::fhelpinfo)
 
 // ----- no-func-idents
 
@@ -2448,8 +2448,8 @@ class VirtualMachine {
         }
         etop = s }
 
-    fun fhelp() {
-        etop = "https://github.com/pointfrip/calculator/blob/main/quickinfo-en.pdf"
+    fun fhelpinfo() {
+        etop = "https://pointfrip.github.io/quickinfo-en.pdf"
     }
 
     fun deflines(lines: Any): Any {
@@ -2572,6 +2572,10 @@ class VirtualMachine {
                 "files=='[3] act id\n" +
                 "loadtext=='[4] act arg iput '_it ee (head°term) app arg\n" +
                 "savetext=='[5] act (arg iput '_self ee (head°term) app arg) iput '_para ee (tail°term) app arg\n" +
+                "fremove=='[6] act arg iput '_it ee (head°term) app arg\n" +
+                "viewurl=='[7] act arg iput '_it ee (head°term) app arg\n" +
+                "date=='[8] act id\n" +
+                "help==helpinfo viewurl\n" +
                 "pim==reverse°[2]°(([0]>1)->*(iszero°[0]-[1]*floor°[0]/[1])->(([0]/[1]),[1],([1],[2]),);([0],([1]+1),[2],))°id,2,(),\n" +
                 "r==((isneg°[1])->'_undef;(round°[1]) app [0])°arg ee (pred°length°arg)-float°head°term\n" +
                 "tailr==id take pred°length\n" +

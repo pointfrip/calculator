@@ -6,6 +6,7 @@ package org.hcmeynert.pointfrip
 // Activity
 import android.app.Activity
 import android.content.*
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Layout
@@ -22,6 +23,7 @@ import android.widget.EditText
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.util.*
 
 
 var vm = VirtualMachine()
@@ -38,6 +40,8 @@ class MainActivity : AppCompatActivity() {
     var idsave: Ident = Ident("save",Nil())
     var idloadtext: Ident = Ident("loadtext",Nil())
     var idsavetext: Ident = Ident("savetext",Nil())
+    var idfremove = Ident("fremove",Nil())
+    var idviewurl = Ident("viewurl",Nil())
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
@@ -248,6 +252,37 @@ class MainActivity : AppCompatActivity() {
                     wfile.writeText(wpara)
                     return vm.run(a.bind,vm.iput(a.data,vm.xit,wname))
                 } else return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idsavetext,"Error in filename")))
+            }
+            6.toLong() -> {
+                val fnm = vm.iget(idfremove,a.data,vm.xit)
+                val rname = when (fnm) {
+                    is Ident  -> fnm.pname.substringAfterLast("/")
+                    is String -> fnm.substringAfterLast("/")
+                    else      -> ""     }
+                if (rname=="") return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idfremove,"Error in filename")))
+                val rpath = applicationContext.filesDir
+                val rdir = File(rpath,"pf")
+                if (!rdir.exists()) rdir.mkdir()
+                val rfile = File(rdir, rname)
+                if (rfile.exists() && rfile.isFile) {
+                    rfile.delete()
+                    return vm.run(a.bind,vm.iput(a.data,vm.xit,!rfile.exists()))
+                } else return vm.run(a.bind,vm.iput(a.data,vm.xit,false))
+            }
+            7.toLong() -> {
+                var url = vm.iget(idviewurl,a.data,vm.xit)
+                if (url !is String)
+                    return vm.run(a.bind,vm.iput(a.data,vm.xit,Error(idviewurl,"String expected")))
+                if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                    url = "http://$url"
+                }
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(browserIntent)
+                return vm.run(a.bind,a.data)
+            }
+            8.toLong() -> {
+                val d = Date().toString()
+                return vm.run(a.bind,vm.iput(a.data,vm.xit,d))
             }
             is Act     -> {  return "Test:Act"}
             else       -> {  return "Test:else"}
