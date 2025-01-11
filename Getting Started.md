@@ -5,7 +5,7 @@ It should be able to be operated like a calculator with functional programming o
 
 The screenshot looks like this:
 
-![calculator-image](https://raw.githubusercontent.com/pointfrip/calculator/main/pixel2bimage.png)
+![calculator-image](https://raw.githubusercontent.com/pointfrip/calculator/main/pointfrip_calc2.png)
 
 Each input line is executed with CALC and the result is then displayed below the button line. \
 The other buttons are behind **CALC** - **Composition** - **Round brackets** - **Square brackets** - **Step left** - **Step right** \
