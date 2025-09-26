@@ -2585,6 +2585,7 @@ class VirtualMachine {
                 "times==[2]°((ispos°[1])->*[0],(pred°[1]),([0] app [2]),)°([0],[1])°ee\n" +
                 "foldl==(not°isprop°[2]) -> [1] ; foldl ° [0],([0] app [1] ee head°[2]),(tail°[2]),\n" +
                 "foldr==foldl ° ([0] comp '([1] ee [0])),[1],(reverse°[2]),\n" +
+                "| == (tail°term) app (head°term) app arg\n" +
                 "== == '== error \"Cannot define: \" & string°term"
     }
 
