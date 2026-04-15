@@ -2,10 +2,9 @@
 ![Hinweis](https://github.com/pointfrip/calculator/blob/main/infoimage3.PNG) Google beißt ab September 2026 zu: \
 Bedeutet, jetzt kann diese Software noch problemlos installiert werden. \
 Da diese Software unter die LGPL-Lizenz fällt, ist keine komerzielle Handhabung möglich. \
-**Nur kommerzielle Software wird dann noch von Google unterstützt !**
-##
+## Nur kommerzielle Software wird dann noch von Google unterstützt !
 
-\
+
 # Pointfrip
 **programmable Calculator**
 
